@@ -8,7 +8,7 @@ namespace WindowsStartupTool.Console
         {
             string machine = "";
 
-            using (var editor = new RegistryEditor(machine, RegistryLookupSourceEnum.User, true))
+            using (var editor = new RegistryEditor(machine, RegistryLookupSourceEnum.User))
             {
                 var apps = editor.GetStartupAppsFromRegistry();
 

@@ -35,7 +35,6 @@ namespace WindowsStartupTool.Lib
 
             if (_registry != null)
             {
-
                 foreach (var app in _registry.GetValueNames().AsEnumerable())
                 {
                     var value = _registry.GetValue(app);
