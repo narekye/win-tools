@@ -14,7 +14,7 @@ namespace WindowsStartupTool.Lib
         private RegistryKey _registry;
         const string StartupSubKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
 
-        public RegistryEditor(RegistryLookupSourceEnum source, string machine, bool startServiceIfNeeded = false)
+        public RegistryEditor(string machine, RegistryLookupSourceEnum source = RegistryLookupSourceEnum.Machine, bool startServiceIfNeeded = false)
         {
             _source = source;
             _startServiceIfNeeded = startServiceIfNeeded;
@@ -54,7 +54,6 @@ namespace WindowsStartupTool.Lib
         /// <param name="machine"></param>
         public void SetStartupAppToRegistry(string key, string executeablePath)
         {
-            InitializeRegistry(StartupSubKey);
             SetRegistry(StartupSubKey, key, executeablePath);
         }
 

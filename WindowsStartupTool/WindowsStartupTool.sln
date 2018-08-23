@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27703.2035
+VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStartupTool.Console", "..\..\WindowsStartupTool\WindowsStartupTool.Console\WindowsStartupTool.Console.csproj", "{EFD20197-97D0-4825-A96D-6E71544567D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStartupTool.Lib", "WindowsStartupTool.Lib\WindowsStartupTool.Lib.csproj", "{DCE56A30-F279-42C8-8561-E4FE9BB9A462}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStartupTool.Lib", "..\..\WindowsStartupTool\WindowsStartupTool.Lib\WindowsStartupTool.Lib.csproj", "{DCE56A30-F279-42C8-8561-E4FE9BB9A462}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStartupTool.Console", "WindowsStartupTool.Console\WindowsStartupTool.Console.csproj", "{EFD20197-97D0-4825-A96D-6E71544567D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,19 +13,19 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EFD20197-97D0-4825-A96D-6E71544567D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EFD20197-97D0-4825-A96D-6E71544567D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EFD20197-97D0-4825-A96D-6E71544567D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EFD20197-97D0-4825-A96D-6E71544567D8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DCE56A30-F279-42C8-8561-E4FE9BB9A462}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DCE56A30-F279-42C8-8561-E4FE9BB9A462}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCE56A30-F279-42C8-8561-E4FE9BB9A462}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCE56A30-F279-42C8-8561-E4FE9BB9A462}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFD20197-97D0-4825-A96D-6E71544567D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFD20197-97D0-4825-A96D-6E71544567D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFD20197-97D0-4825-A96D-6E71544567D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFD20197-97D0-4825-A96D-6E71544567D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {BFCAA4DE-7596-431B-B2EE-25B51B423670}
+		SolutionGuid = {1168345F-8409-493C-AEB6-BEEED1FCBB88}
 	EndGlobalSection
 EndGlobal

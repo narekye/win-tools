@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-//using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
-using WindowsStartupTool.Lib;
+﻿using WindowsStartupTool.Lib;
 
 namespace WindowsStartupTool.Console
 {
@@ -12,9 +6,9 @@ namespace WindowsStartupTool.Console
     {
         static void Main(string[] args)
         {
-            string machine = "cubicle23-pc";
+            string machine = "";
 
-            using (var editor = new RegistryEditor(RegistryLookupSourceEnum.User, machine, true))
+            using (var editor = new RegistryEditor(machine, RegistryLookupSourceEnum.User, true))
             {
                 var apps = editor.GetStartupAppsFromRegistry();
 
