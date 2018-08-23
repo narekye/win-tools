@@ -123,7 +123,6 @@ namespace WindowsStartupTool.Lib
         /// </summary>
         public void Dispose()
         {
-
             if (_registry != null)
                 _registry.Close();
             GC.SuppressFinalize(this);
