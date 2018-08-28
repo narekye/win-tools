@@ -11,4 +11,10 @@
         User = 1,
         Machine
     }
+
+    public enum TargetPlatformEnum
+    {
+        x32 = 1,
+        x64
+    }
 }

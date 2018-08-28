@@ -6,6 +6,9 @@ using System.ServiceProcess;
 
 namespace WindowsStartupTool.Lib
 {
+    /// <summary>
+    /// Author: Narek Yegoryan
+    /// </summary>
     public class RegistryEditor : IDisposable
     {
         private readonly string _machine;
@@ -13,6 +16,7 @@ namespace WindowsStartupTool.Lib
         private readonly RegistryLookupSourceEnum _source;
         private RegistryKey _registry;
         const string StartupSubKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
+        const string RemoteRegistryService = "Remote Registry";
 
         public RegistryEditor(string machine, RegistryLookupSourceEnum source = RegistryLookupSourceEnum.Machine, bool startServiceIfNeeded = false)
         {
@@ -23,13 +27,25 @@ namespace WindowsStartupTool.Lib
                 _machine = Environment.MachineName;
         }
 
+        public Dictionary<string, string> GetAllStartupAppsFromRegistry()
+        {
+            var result = new Dictionary<string, string>();
+
+            var result32 = GetStartupAppsFromRegistry(TargetPlatformEnum.x32);
+            var result64 = GetStartupAppsFromRegistry(TargetPlatformEnum.x64);
+
+            result = result32.Concat(result64).ToDictionary(x => x.Key, y => y.Value);
+
+            return result;
+        }
+
         /// <summary>
         /// Returns the list of startup programs on remote machine, with executable file path's
         /// </summary>
         /// <returns></returns>
-        public Dictionary<string, string> GetStartupAppsFromRegistry()
+        public Dictionary<string, string> GetStartupAppsFromRegistry(TargetPlatformEnum platform = TargetPlatformEnum.x32)
         {
-            InitializeRegistry(StartupSubKey);
+            InitializeRegistry(StartupSubKey, platform);
 
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -60,17 +76,19 @@ namespace WindowsStartupTool.Lib
         /// Initializes RegistryEditor to passed in registry key value
         /// </summary>
         /// <param name="subKey"></param>
-        public void InitializeRegistry(string subKey = "")
+        public void InitializeRegistry(string subKey = "", TargetPlatformEnum targetPlatform = TargetPlatformEnum.x32)
         {
+            RegistryView platform = targetPlatform == TargetPlatformEnum.x32 ? RegistryView.Registry32 : RegistryView.Registry64;
+
             if (string.IsNullOrWhiteSpace(_machine) || _machine == Environment.MachineName)
             {
                 switch (_source)
                 {
                     case RegistryLookupSourceEnum.Machine:
-                        _registry = Registry.LocalMachine.OpenSubKey(subKey);
+                        _registry = Registry.LocalMachine.OpenSubKey(subKey, RegistryKeyPermissionCheck.ReadWriteSubTree);
                         break;
-                    default: // User
-                        _registry = Registry.CurrentUser.OpenSubKey(subKey);
+                    case RegistryLookupSourceEnum.User:
+                        _registry = Registry.CurrentUser.OpenSubKey(subKey, RegistryKeyPermissionCheck.ReadWriteSubTree);
                         break;
                 }
             }
@@ -80,23 +98,28 @@ namespace WindowsStartupTool.Lib
                 {
                     if (_startServiceIfNeeded)
                     {
-                        ServiceController serviceController = new ServiceController("Remote Registry", _machine);
+                        ServiceController serviceController = new ServiceController(RemoteRegistryService, _machine);
                         if (serviceController.Status != ServiceControllerStatus.Running)
                             serviceController.Start();
+                        serviceController.Dispose();
                     }
                     switch (_source)
                     {
                         case RegistryLookupSourceEnum.Machine:
-                            _registry = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, _machine).OpenSubKey(subKey, RegistryKeyPermissionCheck.ReadWriteSubTree);
+                            _registry = RegistryKey
+                                .OpenRemoteBaseKey(RegistryHive.LocalMachine, _machine, platform)
+                                .OpenSubKey(subKey, RegistryKeyPermissionCheck.ReadWriteSubTree);
                             break;
                         default:
-                            _registry = RegistryKey.OpenRemoteBaseKey(RegistryHive.CurrentUser, _machine).OpenSubKey(subKey, RegistryKeyPermissionCheck.ReadWriteSubTree);
+                            _registry = RegistryKey
+                                .OpenRemoteBaseKey(RegistryHive.CurrentUser, _machine, platform)
+                                .OpenSubKey(subKey, RegistryKeyPermissionCheck.ReadWriteSubTree);
                             break;
                     }
                 }
                 catch (System.IO.IOException)
                 {
-                    var exceptionMessage = $"On <{_machine}> computer, < Remote Registry > service is not running.";
+                    var exceptionMessage = $"On < {_machine} >, < {RemoteRegistryService} > service is not running.";
                     throw new Exception(exceptionMessage);
                 }
             }
@@ -115,6 +138,36 @@ namespace WindowsStartupTool.Lib
             if (_registry != null)
             {
                 _registry.SetValue(registryKey, registryValue, RegistryValueKind.String);
+            }
+        }
+
+        /// <summary>
+        /// Removes an app with spacified key from startup
+        /// </summary>
+        /// <param name="key"></param>
+        public void RemoveStartupAppByKey(string key)
+        {
+            RemoveRegistryValueByKey(StartupSubKey, key);
+        }
+
+        /// <summary>
+        /// Removes specified key value pair from registry sub key
+        /// </summary>
+        /// <param name="subKey"></param>
+        /// <param name="registryKey"></param>
+        public void RemoveRegistryValueByKey(string subKey, string registryKey)
+        {
+            try
+            {
+                InitializeRegistry(subKey);
+                if (_registry != null)
+                    _registry.DeleteValue(registryKey, true);
+            }
+            catch (ArgumentException)
+            {
+                InitializeRegistry(subKey, TargetPlatformEnum.x64);
+                if (_registry != null)
+                    _registry.DeleteValue(registryKey, true);
             }
         }
 
