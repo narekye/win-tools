@@ -1,0 +1,125 @@
+﻿<Window x:Class="WindowsStartupTool.Client.AppsWindow.StartupAppsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        mc:Ignorable="d"
+        xmlns:local="clr-namespace:WindowsStartupTool.Client"
+        xmlns:Local1="clr-namespace:WindowsStartupTool.Client.AppsWindow"
+        d:DataContext="{d:DesignInstance Local1:StartupAppsWindowViewModel}"
+        Title="Startup Apps" Height="700" Width="1000" MinWidth="1000" MinHeight="700">
+    <Window.Resources>
+        <local:PassThroughConverter x:Key="converter" />
+        <local:EnumBooleanConverter x:Key="enumConverter"/>
+    </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadControl}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid Margin="5" x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="8*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="5*"/>
+            </Grid.ColumnDefinitions>
+            <CheckBox x:Name="xs" IsChecked="{Binding IsExpanded, Mode=TwoWay}" HorizontalAlignment="Center" Margin="5" VerticalAlignment="Center" Content="{Binding CheckBoxText}" />
+            <GroupBox Grid.Column="1" Header="Export">
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <GroupBox Grid.Column="0" Header="Exported file type">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <RadioButton IsChecked="{Binding FileType, Converter={StaticResource enumConverter}, ConverterParameter=Json}" GroupName="Type" Content="JSON" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                <RadioButton IsChecked="{Binding FileType, Converter={StaticResource enumConverter}, ConverterParameter=Csv}" GroupName="Type" Grid.Column="1" Content="CSV" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                    <GroupBox Header="Folder where to save" Grid.Column="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.5*"/>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <Button Content="Select folder" Margin="5 0 5 0"
+                                    Command="{Binding SelectFolderCommand}"
+                                    VerticalAlignment="Center" />
+                            <TextBox VerticalAlignment="Center" Text="{Binding FolderPath, Mode=TwoWay}" IsEnabled="False" Margin="5 0 5 0" Grid.Column="1"/>
+                            <Button Grid.Column="2" Content="Export/Save" Command="{Binding ExportFileCommand}" VerticalAlignment="Center" Margin="5 0 5 0"/>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </GroupBox>
+        </Grid>
+        <ScrollViewer Grid.Row="1">
+            <ItemsControl  ItemsSource="{Binding ComputersData, Mode=TwoWay}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Expander Header="{Binding ComputerName}" x:Name="expander" Margin="0 10 0 10" IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
+                            <DataGrid ItemsSource="{Binding Data}" AutoGenerateColumns="False" >
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Width="2*" Binding="{Binding Key}" Header="Key" IsReadOnly="True" />
+                                    <DataGridTextColumn Width="5*" Header="Value" Binding="{Binding Value}" IsReadOnly="True"/>
+                                    <DataGridTemplateColumn Width="1*" Header="Action">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Background="Red" CommandParameter="{Binding ElementName=expander, Path=Header}" Content="Remove">
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="Click">
+                                                            <i:InvokeCommandAction Command="{Binding DataContext.RemoveAppCommand, ElementName=LayoutRoot}">
+                                                                <i:InvokeCommandAction.CommandParameter>
+                                                                    <MultiBinding Converter="{StaticResource converter}">
+                                                                        <Binding Path="Header" ElementName="expander"/>
+                                                                        <Binding Path="Key" />
+                                                                    </MultiBinding>
+                                                                </i:InvokeCommandAction.CommandParameter>
+                                                            </i:InvokeCommandAction>
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                </Button>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <Button Background="Red" CommandParameter="{Binding ElementName=expander, Path=Header}" Content="Remove">
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="Click">
+                                                            <i:InvokeCommandAction Command="{Binding DataContext.RemoveAppCommand, ElementName=LayoutRoot}">
+                                                                <i:InvokeCommandAction.CommandParameter>
+                                                                    <MultiBinding Converter="{StaticResource converter}">
+                                                                        <Binding Path="Header" ElementName="expander"/>
+                                                                        <Binding Path="Key" />
+                                                                    </MultiBinding>
+                                                                </i:InvokeCommandAction.CommandParameter>
+                                                            </i:InvokeCommandAction>
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                </Button>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Expander>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</Window>

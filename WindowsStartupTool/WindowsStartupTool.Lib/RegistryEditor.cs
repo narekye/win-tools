@@ -18,6 +18,8 @@ namespace WindowsStartupTool.Lib
         const string StartupSubKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
         const string RemoteRegistryService = "Remote Registry";
 
+        List<string> DefaultStartupApps => new List<string> { "igfxtray", "hotkeyscmds", "persistence" };
+
         public RegistryEditor(string machine, RegistryLookupSourceEnum source = RegistryLookupSourceEnum.Machine, bool startServiceIfNeeded = false)
         {
             _source = source;
@@ -27,14 +29,38 @@ namespace WindowsStartupTool.Lib
                 _machine = Environment.MachineName;
         }
 
-        public Dictionary<string, string> GetAllStartupAppsFromRegistry()
+        public Dictionary<string, string> GetAllStartupAppsFromRegistry(SkippableSourceEnum skipSource = SkippableSourceEnum.None)
         {
-            var result = new Dictionary<string, string>();
-
-            var result32 = GetStartupAppsFromRegistry(TargetPlatformEnum.x32);
+            var result = GetStartupAppsFromRegistry(TargetPlatformEnum.x32);
             var result64 = GetStartupAppsFromRegistry(TargetPlatformEnum.x64);
+            
+            foreach (var item64 in result64)
+            {
+                if (!result.ContainsKey(item64.Key))
+                    result.Add(item64.Key, item64.Value);
+            }
 
-            result = result32.Concat(result64).ToDictionary(x => x.Key, y => y.Value);
+            switch (skipSource)
+            {
+                case SkippableSourceEnum.None:
+                    return result;
+                case SkippableSourceEnum.Default:
+                    return result.Where(x => !DefaultStartupApps.Any(z => z == x.Key.ToLower())).ToDictionary(x => x.Key, y => y.Value);
+                case SkippableSourceEnum.File:
+                    var fileManager = new FileManager();
+                    var skipApps = fileManager.GetFileContent();
+                    return result.Where(x => !skipApps.Any(z => z.ToLower() == x.Key.ToLower())).ToDictionary(x => x.Key, y => y.Value);
+                case SkippableSourceEnum.DefaultWithFile:
+                    var appsToSkip = new List<string>(DefaultStartupApps);
+                    var fManager = new FileManager();
+                    var skipAppsFromFile = fManager.GetFileContent();
+
+                    foreach (var item in skipAppsFromFile)
+                        if (!appsToSkip.Any(x => x.ToLower() == item.ToLower()))
+                            appsToSkip.Add(item);
+
+                    return result.Where(x => !appsToSkip.Any(z => z.ToLower() == x.Key.ToLower())).ToDictionary(x => x.Key, y => y.Value);
+            }
 
             return result;
         }
@@ -53,8 +79,11 @@ namespace WindowsStartupTool.Lib
             {
                 foreach (var app in _registry.GetValueNames().AsEnumerable())
                 {
-                    var value = _registry.GetValue(app);
-                    result.Add(app, value.ToString());
+                    if (!result.ContainsKey(app))
+                    {
+                        var value = _registry.GetValue(app);
+                        result.Add(app, value.ToString());
+                    }
                 }
             }
             return result;
@@ -85,10 +114,10 @@ namespace WindowsStartupTool.Lib
                 switch (_source)
                 {
                     case RegistryLookupSourceEnum.Machine:
-                        _registry = Registry.LocalMachine.OpenSubKey(subKey, RegistryKeyPermissionCheck.ReadWriteSubTree);
+                        _registry = Registry.LocalMachine.OpenSubKey(subKey, RegistryKeyPermissionCheck.ReadWriteSubTree, System.Security.AccessControl.RegistryRights.FullControl);
                         break;
                     case RegistryLookupSourceEnum.User:
-                        _registry = Registry.CurrentUser.OpenSubKey(subKey, RegistryKeyPermissionCheck.ReadWriteSubTree);
+                        _registry = Registry.CurrentUser.OpenSubKey(subKey, RegistryKeyPermissionCheck.ReadWriteSubTree, System.Security.AccessControl.RegistryRights.FullControl);
                         break;
                 }
             }
@@ -121,6 +150,10 @@ namespace WindowsStartupTool.Lib
                 {
                     var exceptionMessage = $"On < {_machine} >, < {RemoteRegistryService} > service is not running.";
                     throw new Exception(exceptionMessage);
+                }
+                catch (Exception e)
+                {
+                    throw e;
                 }
             }
         }

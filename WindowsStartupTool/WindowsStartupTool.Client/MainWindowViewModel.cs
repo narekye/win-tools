@@ -3,53 +3,150 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows;
 using WindowsStartupTool.Lib;
+using System.Linq;
+using WindowsStartupTool.Client.AppsWindow;
 
 namespace WindowsStartupTool.Client
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
+        #region Fields
+
+        const string CheckAll = "Check All";
+        const string UnCheckAll = "UnCheck All";
+
+        ProcessController.Lib.Library _lib = new ProcessController.Lib.Library();
         private RegistryLookupSourceEnum _lookupSource;
+        private SkippableSourceEnum _skippableSource;
         private bool _startRemoteRegistryServiceIfNeeded;
+        private bool _skipDefaults;
+        private bool _filterByPc;
         private string _machineName;
+        private string _comboContent;
         private RegistryEditor _registryEditor;
         private string _registryKey;
         private string _registryValue;
         private ObservableCollection<KeyValuePair<string, string>> _startupApps;
+        private ObservableCollection<SelectableComputer> _domainComputers;
+        private string _selectAllBtnText;
+        private ObservableCollection<string> _allComputers;
+        private bool _thisMachine;
+        #endregion
 
-        public ObservableCollection<KeyValuePair<string, string>> StartupApps
-        {
-            get { return _startupApps; }
-            set
-            {
-                if (_startupApps != value)
-                {
-                    _startupApps = value;
-                    Notify();
-                }
-            }
-        }
+        #region Commands
 
         public RelayCommand ShowStartupAppsCommand { get; }
         public RelayCommand SetRegistryCommand { get; }
         public RelayCommand RemoveAppFromStartup { get; }
+        public RelayCommand ShowStartupAppsFromSelectedComputers { get; }
+        public RelayCommand SelectAllComputers { get; }
+        public RelayCommand ViewSkippableKeys { get; }
+        #endregion
+
+        #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public MainWindowViewModel()
-        {
-            MachineName = Environment.MachineName;
-            ShowStartupAppsCommand = new RelayCommand(ShowStartupAppsExecute);
-            SetRegistryCommand = new RelayCommand(SetRegistryExecute);
-            LookupSource = RegistryLookupSourceEnum.Machine;
-            RemoveAppFromStartup = new RelayCommand(RemoveAppFromStartupExecute);
-        }
 
         void Notify([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
+
+        #region Constructors
+
+        public MainWindowViewModel()
+        {
+            ShowStartupAppsCommand = new RelayCommand(ShowStartupAppsExecute);
+            ViewSkippableKeys = new RelayCommand(ViewSkippableKeysExecute);
+            SetRegistryCommand = new RelayCommand(SetRegistryExecute, CanExecuteSetRegistry);
+            RemoveAppFromStartup = new RelayCommand(RemoveAppFromStartupExecute);
+            ShowStartupAppsFromSelectedComputers = new RelayCommand(ShowStartupAppsFromSelectedComputersExecute, CanExecuteShowStartupApps);
+            SelectAllComputers = new RelayCommand(SelectAllComputersExecute);
+
+            SkipDefaults = true;
+            LookupSource = RegistryLookupSourceEnum.Machine;
+
+            try
+            {
+                _allComputers = new ObservableCollection<string>(_lib.GetCurrentDomainComputers().OrderBy(x => x));
+            }
+            catch (Exception)
+            {
+                _allComputers = new ObservableCollection<string> { Environment.MachineName };
+            }
+
+            MachineName = _allComputers.FirstOrDefault();
+
+            FilterByPc = true;
+            SelectAllBtnText = CheckAll;
+            SkippableSource = SkippableSourceEnum.Default;
+        }
+
+        #endregion
+
+        #region Predicates
+
+        bool CanExecuteShowStartupApps(object param)
+        {
+            return DomainComputers?.Any(x => x.IsSelected) ?? false;
+        }
+
+        bool CanExecuteSetRegistry(object param)
+        {
+            return !string.IsNullOrWhiteSpace(RegistryKey) && !string.IsNullOrEmpty(RegistryValue) && !string.IsNullOrEmpty(MachineName);
+        }
+
+        #endregion
+
+        #region Execute
+
+        void ShowStartupAppsFromSelectedComputersExecute(object param)
+        {
+            var dataToShow = new List<NodeItem>();
+
+            var computers = DomainComputers?.Where(x => x.IsSelected).ToList();
+
+            foreach (var computer in computers)
+            {
+                using (_registryEditor = new RegistryEditor(computer?.Name, LookupSource, StartRemoteRegistryServiceIfNeeded))
+                {
+                    Dictionary<string, string> apps = null;
+
+                    try
+                    {
+                        apps = _registryEditor.GetAllStartupAppsFromRegistry(SkippableSource);
+                    }
+                    catch
+                    {
+                    }
+
+                    var data = apps?.Select(x => new KeyValuePair<string, string>(x.Key, x.Value)).ToList();
+
+                    string name = string.Empty;
+
+                    if (data == null)
+                        name = $"{computer?.Name} / (Not available)";
+                    else if (!data.Any())
+                        name = $"{computer?.Name} / NO EXTRA APPS";
+                    else
+                        name = $"{computer?.Name}";
+
+                    dataToShow.Add(new NodeItem
+                    {
+                        ComputerName = name,
+                        Data = new ObservableCollection<KeyValuePair<string, string>>(data ?? new List<KeyValuePair<string, string>>())
+                    });
+                }
+            }
+            var window = new StartupAppsWindow();
+            var viewModel = new StartupAppsWindowViewModel(dataToShow);
+            window.DataContext = viewModel;
+            window.Show();
+
         }
 
         void ShowStartupAppsExecute(object param)
@@ -58,11 +155,8 @@ namespace WindowsStartupTool.Client
             {
                 try
                 {
-                    var result = _registryEditor.GetAllStartupAppsFromRegistry();
-                    var builder = new StringBuilder();
-
+                    var result = _registryEditor.GetAllStartupAppsFromRegistry(SkippableSource);
                     StartupApps = new ObservableCollection<KeyValuePair<string, string>>(result);
-
                 }
                 catch (Exception ex)
                 {
@@ -90,12 +184,161 @@ namespace WindowsStartupTool.Client
                     _registryEditor.SetStartupAppToRegistry(RegistryKey, RegistryValue);
                 }
                 MessageBox.Show("Success !", "", MessageBoxButton.OK, MessageBoxImage.Information);
+                RegistryKey = string.Empty;
+                RegistryValue = string.Empty;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
             ShowStartupAppsExecute(null);
+        }
+
+        void SelectAllComputersExecute(object param)
+        {
+            bool IsAnyChecked = SelectAllBtnText == CheckAll;
+
+            if (IsAnyChecked)
+                SelectAllBtnText = UnCheckAll;
+            else
+                SelectAllBtnText = CheckAll;
+
+            foreach (var item in DomainComputers)
+                item.IsSelected = IsAnyChecked;
+        }
+
+        void UpdateComputersList()
+        {
+            if (FilterByPc)
+            {
+                DomainComputers = new ObservableCollection<SelectableComputer>(_allComputers.Where(x => x.EndsWith("pc", StringComparison.InvariantCultureIgnoreCase)).OrderBy(x => x)
+                .Select(x => { var item = new SelectableComputer { Name = x, IsSelected = false }; item.PropertyChanged += UpdateString; return item; }));
+            }
+            else
+            {
+                DomainComputers = new ObservableCollection<SelectableComputer>(_allComputers.OrderBy(x => x).Select(x => { var item = new SelectableComputer { Name = x, IsSelected = false }; item.PropertyChanged += UpdateString; return item; }));
+            }
+        }
+
+        void UpdateString(object o, PropertyChangedEventArgs e)
+        {
+            if (DomainComputers != null)
+            {
+                var selectedData = DomainComputers.Where(x => x.IsSelected);
+                ComboContent = string.Join(", ", selectedData.Select(x => x.Name));
+            }
+            ShowStartupAppsFromSelectedComputers.NotifyCanExecuteChanged();
+        }
+
+        void ViewSkippableKeysExecute(object param)
+        {
+            var window = new SkipKeysWindow.SkipKeysWindow();
+            window.DataContext = new SkipKeysWindow.SkipKeysWindowViewModel();
+
+            window.Show();
+        }
+
+        #endregion
+
+        #region Properties
+
+        public ObservableCollection<string> AllComputers
+        {
+            get { return _allComputers; }
+            set
+            {
+                if (_allComputers != value)
+                {
+                    _allComputers = value; Notify();
+                }
+            }
+        }
+
+        public bool ThisMachine
+        {
+            get { return _thisMachine; }
+            set
+            {
+                if (_thisMachine != value)
+                {
+                    _thisMachine = value;
+                    if (value)
+                    {
+                        MachineName = Environment.MachineName;
+                        StartRemoteRegistryServiceIfNeeded = false;
+                    }
+                    else
+                        MachineName = _allComputers?.FirstOrDefault();
+                }
+            }
+        }
+
+        public ObservableCollection<SelectableComputer> DomainComputers
+        {
+            get { return _domainComputers; }
+            set
+            {
+                if (_domainComputers != value)
+                {
+                    _domainComputers = value;
+                    ShowStartupAppsFromSelectedComputers.NotifyCanExecuteChanged();
+                    Notify();
+                }
+            }
+        }
+
+        public SkippableSourceEnum SkippableSource
+        {
+            get { return _skippableSource; }
+            set
+            {
+                if (_skippableSource != value)
+                {
+                    _skippableSource = value;
+                    ViewSkippableKeys?.NotifyCanExecuteChanged();
+                    Notify();
+                }
+            }
+        }
+
+        public bool FilterByPc
+        {
+            get { return _filterByPc; }
+            set
+            {
+                if (_filterByPc != value)
+                {
+                    _filterByPc = value;
+                    UpdateComputersList();
+                    Notify();
+                }
+            }
+        }
+
+        public bool SkipDefaults
+        {
+            get { return _skipDefaults; }
+            set
+            {
+                if (_skipDefaults != value)
+                {
+                    _skipDefaults = value;
+                    Notify();
+                }
+            }
+        }
+
+        public ObservableCollection<KeyValuePair<string, string>> StartupApps
+        {
+            get { return _startupApps; }
+            set
+            {
+                if (_startupApps != value)
+                {
+                    _startupApps = value;
+                    Notify();
+                }
+            }
         }
 
         public RegistryLookupSourceEnum LookupSource
@@ -119,6 +362,20 @@ namespace WindowsStartupTool.Client
                 if (_registryKey != value)
                 {
                     _registryKey = value;
+                    SetRegistryCommand.NotifyCanExecuteChanged();
+                    Notify();
+                }
+            }
+        }
+
+        public string ComboContent
+        {
+            get { return _comboContent; }
+            set
+            {
+                if (_comboContent != value)
+                {
+                    _comboContent = value;
                     Notify();
                 }
             }
@@ -132,6 +389,7 @@ namespace WindowsStartupTool.Client
                 if (_registryValue != value)
                 {
                     _registryValue = value;
+                    SetRegistryCommand.NotifyCanExecuteChanged();
                     Notify();
                 }
             }
@@ -158,9 +416,25 @@ namespace WindowsStartupTool.Client
                 if (_machineName != value)
                 {
                     _machineName = value;
+                    SetRegistryCommand?.NotifyCanExecuteChanged();
                     Notify();
                 }
             }
         }
+
+        public string SelectAllBtnText
+        {
+            get { return _selectAllBtnText; }
+            set
+            {
+                if (_selectAllBtnText != value)
+                {
+                    _selectAllBtnText = value;
+                    Notify();
+                }
+            }
+        }
+
+        #endregion
     }
 }

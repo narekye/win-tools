@@ -6,64 +6,167 @@
         d:DataContext="{d:DesignInstance local:MainWindowViewModel}"
         xmlns:local="clr-namespace:WindowsStartupTool.Client"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Startup application tool" Height="700" Width="1000" MinWidth="1000" MinHeight="700" >
     <Window.Resources>
         <local:EnumBooleanConverter x:Key="enumConverter" />
+        <local:BoolRevertConverter x:Key="revertConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="10*" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="15*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Margin="5">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <CheckBox  IsChecked="{Binding StartRemoteRegistryServiceIfNeeded, Mode=TwoWay}" Content="Start Remote Registry service if needed" VerticalAlignment="Center" HorizontalAlignment="Center" />
-            <Grid Grid.Column="1">
+        <GroupBox Header="Global configuration" Margin="5 0 5 0">
+            <Grid Grid.Row="0" Margin="5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
-                <RadioButton Grid.Column="0" Content="Machine" GroupName="First" VerticalAlignment="Center"  HorizontalAlignment="Center" IsChecked="{Binding LookupSource, Converter={StaticResource enumConverter}, ConverterParameter=Machine}"/>
-                <RadioButton Grid.Column="1" Content="User" GroupName="First" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding LookupSource, Converter={StaticResource enumConverter}, ConverterParameter=User}"/>
-                <TextBox Width="120" Grid.Column="2" Text="{Binding MachineName, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <CheckBox IsEnabled="{Binding ElementName=thisMachine, Path=IsChecked, Converter={StaticResource revertConverter}}" IsChecked="{Binding StartRemoteRegistryServiceIfNeeded, Mode=TwoWay}" Content="Start remote registry if needed" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="2*" />
+                    </Grid.ColumnDefinitions>
+                    <GroupBox Header="Registry lookup/store source" Grid.Column="0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <RadioButton Grid.Column="0" Content="Machine" GroupName="First" VerticalAlignment="Center"  HorizontalAlignment="Center" IsChecked="{Binding LookupSource, Converter={StaticResource enumConverter}, ConverterParameter=Machine}"/>
+                            <RadioButton Grid.Column="1" Content="User" GroupName="First" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding LookupSource, Converter={StaticResource enumConverter}, ConverterParameter=User}"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Use skippable app keys from" Grid.Column="2">
+                        <Grid Grid.Column="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="4*"/>
+                                <ColumnDefinition Width="4*"/>
+                                <ColumnDefinition Width="5*"/>
+                            </Grid.ColumnDefinitions>
+                            <RadioButton Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding SkippableSource, Converter={StaticResource enumConverter}, ConverterParameter=None}" GroupName="Skippable" Content="None" />
+                            <RadioButton Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Default" GroupName="Skippable" IsChecked="{Binding SkippableSource, Converter={StaticResource enumConverter}, ConverterParameter=Default}" />
+                            <RadioButton Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Keys from file" GroupName="Skippable" IsChecked="{Binding SkippableSource, Converter={StaticResource enumConverter}, ConverterParameter=File}"/>
+                            <RadioButton Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Default w/ file" GroupName="Skippable" IsChecked="{Binding SkippableSource, Converter={StaticResource enumConverter}, ConverterParameter=DefaultWithFile}" />
+                            <Button Content="View/edit file content" Width="120" Command="{Binding ViewSkippableKeys}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="4" />
+                        </Grid>
+                    </GroupBox>
+                </Grid>
             </Grid>
-        </Grid>
+        </GroupBox>
         <Grid Grid.Row="1" Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="10*" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
-                <Button Width="150" Command="{Binding ShowStartupAppsCommand}" Height="22" Content="Show startup apps" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <GroupBox Header="Show apps from selected machines">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox IsChecked="{Binding FilterByPc, Mode=TwoWay}" Content="Filter by PC ending" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        <Button HorizontalAlignment="Center" Content="{Binding SelectAllBtnText}" Command="{Binding SelectAllComputers}" VerticalAlignment="Center" Margin="5 0 5 0" Grid.Column="1"/>
+                        <ComboBox Margin="5 0 5 0" IsReadOnly="True" IsEditable="True" Text="{Binding ComboContent, Mode=TwoWay}" Grid.Column="2" ItemsSource="{Binding DomainComputers}" VerticalAlignment="Center" >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="3*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+                                        <Label Grid.Column="1" VerticalAlignment="Center" Content="{Binding Name, Mode=TwoWay}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <Button Content="Show" Grid.Column="3" Margin="5 0 5 0" Command="{Binding ShowStartupAppsFromSelectedComputers}" VerticalAlignment="Center"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Grid.Column="1" Header="Individual machine">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Machine:" VerticalAlignment="Center" Margin="5 0 5 0" HorizontalAlignment="Center"/>
+                            <ComboBox IsEnabled="{Binding ElementName=thisMachine, Path=IsChecked, Converter={StaticResource revertConverter}}" ItemsSource="{Binding AllComputers, Mode=TwoWay}" SelectedItem="{Binding MachineName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="5 0 5 0" Grid.Column="1"/>
+                            <CheckBox x:Name="thisMachine" IsChecked="{Binding ThisMachine, Mode=TwoWay}" Content="This machine" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5 0 5 0" Grid.Column="2" />
+                        </Grid>
+                        <Button Grid.Column="1" Command="{Binding ShowStartupAppsCommand}" Content="Show startup apps" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5 0 5 0"/>
+                    </Grid>
+                </GroupBox>
             </Grid>
             <GroupBox Header="Startup apps" Grid.Row="1">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="2*" />
-                        <RowDefinition Height="8*" />
+                        <RowDefinition Height="13*" />
                     </Grid.RowDefinitions>
                     <GroupBox Header="Add app to startup">
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*" />
                                 <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="4*" />
                                 <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Label Content="Registry key" VerticalAlignment="Center"/>
-                                <Separator Width="2" Background="Transparent"/>
-                                <TextBox VerticalAlignment="Center" Width="150" Text="{Binding RegistryKey, Mode=TwoWay}" />
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center">
+
+                            <Grid Grid.Column="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Label VerticalAlignment="Center" HorizontalAlignment="Right" Content="Selected machine: " Grid.Column="0"/>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding MachineName}" HorizontalAlignment="Left" Grid.Column="1"/>
+                            </Grid>
+
+                            <Grid Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Label HorizontalAlignment="Right" Content="Registry key" VerticalAlignment="Center"/>
+                                <TextBox VerticalAlignment="Center" Grid.Column="1" Margin="5 0 5 0" Text="{Binding RegistryKey, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                            </Grid>
+
+                            <Grid Grid.Column="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Registry value, (exe path)" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBox VerticalAlignment="Center" Grid.Column="1"  Text="{Binding RegistryValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 5 0" />
+                            </Grid>
+                            
+                            <!--<StackPanel Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Center">
                                 <Label Content="Registry value, (exe path)" VerticalAlignment="Center"/>
                                 <Separator Width="2" Background="Transparent"/>
-                                <TextBox VerticalAlignment="Center" Width="150" Text="{Binding RegistryValue, Mode=TwoWay}" />
-                            </StackPanel>
-                            <Button HorizontalAlignment="Center" Command="{Binding SetRegistryCommand}" VerticalAlignment="Center" Grid.Row="1" Grid.Column="2" Content="Set registry" Height="24" Width="100" />
+                                <TextBox VerticalAlignment="Center" Width="120" Text="{Binding RegistryValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>-->
+                            <Button HorizontalAlignment="Center" Command="{Binding SetRegistryCommand}" VerticalAlignment="Center" Grid.Row="1" Grid.Column="3" Content="Set to registry" Height="24" Width="100" />
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="Apps" Grid.Row="1">
@@ -74,9 +177,9 @@
                                   CanUserResizeColumns="True"
                                   ItemsSource="{Binding StartupApps, Mode=TwoWay}" Margin="5" AutoGenerateColumns="False">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Key" IsReadOnly="True" Binding="{Binding Key}"/>
-                                <DataGridTextColumn Header="Value" IsReadOnly="True" Binding="{Binding Value}"/>
-                                <DataGridTemplateColumn Header="Action">
+                                <DataGridTextColumn Width="2*" Header="Key" IsReadOnly="True" Binding="{Binding Key}"/>
+                                <DataGridTextColumn Width="5*" Header="Value" IsReadOnly="True" Binding="{Binding Value}"/>
+                                <DataGridTemplateColumn Width="1*" Header="Action">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Button Background="Red" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}, Mode=FindAncestor}, Path=DataContext.RemoveAppFromStartup}" Content="Remove" CommandParameter="{Binding Key}"/>

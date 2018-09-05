@@ -17,4 +17,18 @@
         x32 = 1,
         x64
     }
+
+    public enum SkippableSourceEnum
+    {
+        None,
+        Default,
+        File,
+        DefaultWithFile
+    }
+
+    public enum ExportFileTypeEnum
+    {
+        Csv = 1,
+        Json
+    }
 }
