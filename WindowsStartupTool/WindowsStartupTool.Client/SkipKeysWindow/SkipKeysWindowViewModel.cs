@@ -66,7 +66,6 @@ namespace WindowsStartupTool.Client.SkipKeysWindow
         {
             _fileManager.SaveToFile(Names.Select(x => x.Value));
 
-            Names = new ObservableCollection<Node>();
             Names = new ObservableCollection<Node>(_fileManager.GetFileContent().Select(x => new Node { Value = x }));
 
             MessageBox.Show("Saved", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
