@@ -1,4 +1,5 @@
 ﻿using Meshimer.Scrapper.BLL;
+using System.Linq;
 
 namespace Meshimer.Scrapper.Console
 {
@@ -6,9 +7,23 @@ namespace Meshimer.Scrapper.Console
     {
         static void Main(string[] args)
         {
+            BrowserTypeEnum browser = BrowserTypeEnum.Chrome;
+            if (args != null && args.Any())
+            {
+                var browserName = args[0];
+                switch (browserName.ToLower())
+                {
+                    case "firefox":
+                        browser = BrowserTypeEnum.Firefox;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             string username = string.Empty;
 
-            using (var scrapper = new MeshimerScrapper(BrowserTypeEnum.Chrome))
+            using (var scrapper = new MeshimerScrapper(browser))
             {
                 username = scrapper.GetUsernameFromMeshimerPage();
             }
