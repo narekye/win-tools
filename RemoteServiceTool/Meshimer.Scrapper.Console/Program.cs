@@ -14,7 +14,7 @@ namespace Meshimer.Scrapper.Console
             // -browser [chrome] [firefox]
             BrowserTypeEnum browser = BrowserTypeEnum.Chrome;
 
-            Logger.Instance.LogMessage("App started");
+            Logger.Instance.LogMessage(Constants.AppStarted);
 
             if (args != null && args.Any())
             {
@@ -23,13 +23,13 @@ namespace Meshimer.Scrapper.Console
                     browser = BrowserTypeEnum.Firefox;
             }
 
-            Logger.Instance.LogMessage(string.Format("Current Browser {0}", Enum.GetName(typeof(BrowserTypeEnum), browser)));
+            Logger.Instance.LogMessage(string.Format(Constants.CurrentBrowser, Enum.GetName(typeof(BrowserTypeEnum), browser)));
 
             string username = string.Empty;
 
             using (var scrapper = new MeshimerScrapper(browser))
             {
-                Logger.Instance.LogMessage("Browser opened success!!!");
+                Logger.Instance.LogMessage(Constants.BrowserOpened);
                 username = scrapper.GetUserNameFromMeshimerPageAndHandle(UsernameMismatchHandler);
                 var logMessage = string.Format(Constants.UserNameFromMeshimerPage, username);
 
