@@ -1,6 +1,6 @@
 ﻿namespace Meshimer.Scrapper.Service
 {
-    partial class Service1
+    partial class MeshimerService
     {
         /// <summary> 
         /// Required designer variable.
