@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Meshimer.Scrapper.BLL;
 
 namespace Meshimer.Scrapper.Console
 {
@@ -10,6 +6,16 @@ namespace Meshimer.Scrapper.Console
     {
         static void Main(string[] args)
         {
+            string username = string.Empty;
+
+            using (var scrapper = new MeshimerScrapper(BrowserTypeEnum.Chrome))
+            {
+                username = scrapper.GetUsernameFromMeshimerPage();
+            }
+
+            System.Console.Clear();
+            System.Console.WriteLine("Username from Meshimer page {0}", username);
+            System.Console.Read();
         }
     }
 }

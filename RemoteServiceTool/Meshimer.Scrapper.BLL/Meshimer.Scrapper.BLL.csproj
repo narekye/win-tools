@@ -44,10 +44,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BrowserTypeEnum.cs" />
+    <Compile Include="MeshimerScrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Meshimer.Common\Meshimer.Common.csproj">
+      <Project>{82472573-dc69-43a2-b3f1-78d50badd9a5}</Project>
+      <Name>Meshimer.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
