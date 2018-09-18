@@ -19,10 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.RemoteInstaller", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meshimer.Common", "Meshimer.Common\Meshimer.Common.csproj", "{82472573-DC69-43A2-B3F1-78D50BADD9A5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Other", "Other", "{9F2E7B79-B92F-4DC0-8CC8-D71CC5DAAFF6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessController.Lib", "ProcessController.Lib\ProcessController.Lib.csproj", "{4F30185E-EE8C-45A8-8058-8C5C4BFDE29F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,10 +49,6 @@ Global
 		{82472573-DC69-43A2-B3F1-78D50BADD9A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82472573-DC69-43A2-B3F1-78D50BADD9A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82472573-DC69-43A2-B3F1-78D50BADD9A5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4F30185E-EE8C-45A8-8058-8C5C4BFDE29F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4F30185E-EE8C-45A8-8058-8C5C4BFDE29F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4F30185E-EE8C-45A8-8058-8C5C4BFDE29F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4F30185E-EE8C-45A8-8058-8C5C4BFDE29F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,7 +60,6 @@ Global
 		{3B7BF7F9-AA26-4F45-AF54-7DD2BBB6E729} = {349EE48D-8F69-42AF-ACBD-C6E0097B47B2}
 		{533FFFB0-FBE3-4E2C-AFF9-F040B3611028} = {A44E6575-A526-41F6-9BEA-422C02D6350A}
 		{82472573-DC69-43A2-B3F1-78D50BADD9A5} = {349EE48D-8F69-42AF-ACBD-C6E0097B47B2}
-		{4F30185E-EE8C-45A8-8058-8C5C4BFDE29F} = {9F2E7B79-B92F-4DC0-8CC8-D71CC5DAAFF6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EB07E7BA-59B6-4362-90A8-03396B266DFC}

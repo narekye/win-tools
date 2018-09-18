@@ -53,6 +53,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Meshimer.Common\Meshimer.Common.csproj">
+      <Project>{82472573-DC69-43A2-B3F1-78D50BADD9A5}</Project>
+      <Name>Meshimer.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Meshimer.Scrapper.BLL\Meshimer.Scrapper.BLL.csproj">
       <Project>{8e67c781-610a-4e85-b6dc-bbf8ba588ebc}</Project>
       <Name>Meshimer.Scrapper.BLL</Name>

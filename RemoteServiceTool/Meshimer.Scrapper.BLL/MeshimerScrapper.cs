@@ -4,10 +4,14 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using System;
+using System.Linq;
 using System.Threading;
 
 namespace Meshimer.Scrapper.BLL
 {
+    /// <summary>
+    /// Author: Narek Yegoryan
+    /// </summary>
     public class MeshimerScrapper : IDisposable
     {
         #region Fields
@@ -32,9 +36,9 @@ namespace Meshimer.Scrapper.BLL
 
         #region Methods
 
-        public string GetUsernameFromMeshimerPage()
+        public string GetUserNameFromMeshimerPageAndHandle(Action executeOnMismatch = null)
         {
-            var username = string.Empty;
+            var parsedUsername = string.Empty;
             if (_webDriver != null)
             {
                 _webDriver.Navigate().GoToUrl("https://www.youtube.com");
@@ -47,10 +51,16 @@ namespace Meshimer.Scrapper.BLL
                 {
                     var elementText = blockElement.Text;
                     var index = elementText.IndexOf('\r');
-                    username = elementText.Substring(5, index - 5).Trim();
+                    parsedUsername = elementText.Substring(5, index - 5).Trim();
                 }
             }
-            return username;
+
+            string curentMachineUserName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+
+            if (curentMachineUserName.Split('\\').LastOrDefault() != parsedUsername)
+                executeOnMismatch?.Invoke();
+
+            return parsedUsername;
         }
 
         void InitializeWebDriver(BrowserTypeEnum browserType)
