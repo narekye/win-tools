@@ -3,9 +3,56 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ServiceTools", "ServiceTools", "{A44E6575-A526-41F6-9BEA-422C02D6350A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.AppRunner", "Service.AppRunner\Service.AppRunner.csproj", "{BE9561AA-5EDB-4E7B-9D77-A558378714F3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meshimer", "Meshimer", "{349EE48D-8F69-42AF-ACBD-C6E0097B47B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meshimer.Scrapper.BLL", "Meshimer.Scrapper.BLL\Meshimer.Scrapper.BLL.csproj", "{8E67C781-610A-4E85-B6DC-BBF8BA588EBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meshimer.Scrapper.Console", "Meshimer.Scrapper.Console\Meshimer.Scrapper.Console.csproj", "{8C5EB526-B05C-4142-827F-E0FCD0D442AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meshimer.Scrapper.Service", "Meshimer.Scrapper.Service\Meshimer.Scrapper.Service.csproj", "{3B7BF7F9-AA26-4F45-AF54-7DD2BBB6E729}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.RemoteInstaller", "Service.RemoteInstaller\Service.RemoteInstaller.csproj", "{533FFFB0-FBE3-4E2C-AFF9-F040B3611028}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BE9561AA-5EDB-4E7B-9D77-A558378714F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE9561AA-5EDB-4E7B-9D77-A558378714F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE9561AA-5EDB-4E7B-9D77-A558378714F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE9561AA-5EDB-4E7B-9D77-A558378714F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E67C781-610A-4E85-B6DC-BBF8BA588EBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E67C781-610A-4E85-B6DC-BBF8BA588EBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E67C781-610A-4E85-B6DC-BBF8BA588EBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E67C781-610A-4E85-B6DC-BBF8BA588EBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C5EB526-B05C-4142-827F-E0FCD0D442AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C5EB526-B05C-4142-827F-E0FCD0D442AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C5EB526-B05C-4142-827F-E0FCD0D442AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C5EB526-B05C-4142-827F-E0FCD0D442AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B7BF7F9-AA26-4F45-AF54-7DD2BBB6E729}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B7BF7F9-AA26-4F45-AF54-7DD2BBB6E729}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B7BF7F9-AA26-4F45-AF54-7DD2BBB6E729}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B7BF7F9-AA26-4F45-AF54-7DD2BBB6E729}.Release|Any CPU.Build.0 = Release|Any CPU
+		{533FFFB0-FBE3-4E2C-AFF9-F040B3611028}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{533FFFB0-FBE3-4E2C-AFF9-F040B3611028}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{533FFFB0-FBE3-4E2C-AFF9-F040B3611028}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{533FFFB0-FBE3-4E2C-AFF9-F040B3611028}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BE9561AA-5EDB-4E7B-9D77-A558378714F3} = {A44E6575-A526-41F6-9BEA-422C02D6350A}
+		{8E67C781-610A-4E85-B6DC-BBF8BA588EBC} = {349EE48D-8F69-42AF-ACBD-C6E0097B47B2}
+		{8C5EB526-B05C-4142-827F-E0FCD0D442AB} = {349EE48D-8F69-42AF-ACBD-C6E0097B47B2}
+		{3B7BF7F9-AA26-4F45-AF54-7DD2BBB6E729} = {349EE48D-8F69-42AF-ACBD-C6E0097B47B2}
+		{533FFFB0-FBE3-4E2C-AFF9-F040B3611028} = {A44E6575-A526-41F6-9BEA-422C02D6350A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EB07E7BA-59B6-4362-90A8-03396B266DFC}
