@@ -44,7 +44,7 @@ namespace Meshimer.Scrapper.BLL
                 _webDriver.Navigate().GoToUrl("https://www.youtube.com");
                 IWebElement blockElement = null;
 
-                if (_broserType != BrowserTypeEnum.IE)
+                if (_broserType != BrowserTypeEnum.IE) // IE issue
                     blockElement = _webDriver.FindElement(By.Id(Constants.wb_BlockDetails));
 
                 if (blockElement != null)
@@ -55,9 +55,9 @@ namespace Meshimer.Scrapper.BLL
                 }
             }
 
-            string curentMachineUserName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+            string currentMachineUserName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 
-            if (curentMachineUserName.Split('\\').LastOrDefault() != parsedUsername)
+            if (currentMachineUserName.Split('\\').LastOrDefault() != parsedUsername)
                 executeOnMismatch?.Invoke();
 
             return parsedUsername;

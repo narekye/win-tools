@@ -26,7 +26,7 @@ namespace Meshimer.Common.Logger
         public void LogMessage(string message)
         {
             var currentTime = DateTime.Now.ToString();
-            var appendText = $"{currentTime} : {message}";
+            var appendText = $"{currentTime} : {message}{Environment.NewLine}";
 
             lock (_locker)
                 File.AppendAllText(FullFilePath, appendText);

@@ -1,6 +1,7 @@
 ﻿using Meshimer.Common;
 using Meshimer.Common.Logger;
 using Meshimer.Scrapper.BLL;
+using System;
 using System.Linq;
 using System.Threading;
 
@@ -22,13 +23,20 @@ namespace Meshimer.Scrapper.Console
                     browser = BrowserTypeEnum.Firefox;
             }
 
+            Logger.Instance.LogMessage(string.Format("Current Browser {0}", Enum.GetName(typeof(BrowserTypeEnum), browser)));
+
             string username = string.Empty;
 
             using (var scrapper = new MeshimerScrapper(browser))
             {
+                Logger.Instance.LogMessage("Browser opened success!!!");
                 username = scrapper.GetUserNameFromMeshimerPageAndHandle(UsernameMismatchHandler);
+                var logMessage = string.Format(Constants.UserNameFromMeshimerPage, username);
+
+                Logger.Instance.LogMessage(logMessage);
+
                 System.Console.Clear();
-                System.Console.WriteLine(string.Format(Constants.UserNameFromMeshimerPage, username));
+                System.Console.WriteLine(logMessage);
                 Thread.Sleep(1000);
             }
         }
