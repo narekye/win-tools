@@ -10,7 +10,7 @@ namespace Meshimer.Common
         public const string LogFolderName = "Meshimer service logs";
 
         public const string ServiceName = "Meshimer.Scrapper";
-        public const string ServiceDescription = "";
+        public const string ServiceDescription = "Service for parsing username from Meshimer block screen.";
         public const string ServiceDisplayName = "Meshimer Scrapper Service";
 
         public const string wb_BlockDetails = "wb_BlockDetails";

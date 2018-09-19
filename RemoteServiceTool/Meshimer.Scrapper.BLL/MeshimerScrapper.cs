@@ -5,7 +5,6 @@ using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using System;
 using System.Linq;
-using System.Threading;
 
 namespace Meshimer.Scrapper.BLL
 {
@@ -20,7 +19,7 @@ namespace Meshimer.Scrapper.BLL
         private FirefoxOptions _fireFoxOptions;
         private ChromeOptions _chromeOptions;
         private InternetExplorerOptions _explorerOptions;
-        private readonly BrowserTypeEnum _broserType;
+        private readonly BrowserTypeEnum _browserType;
 
         #endregion
 
@@ -28,8 +27,8 @@ namespace Meshimer.Scrapper.BLL
 
         public MeshimerScrapper(BrowserTypeEnum browserType = BrowserTypeEnum.Chrome)
         {
-            _broserType = browserType;
-            InitializeWebDriver(browserType);
+            _browserType = browserType;
+            InitializeWebDriver(_browserType);
         }
 
         #endregion
@@ -41,10 +40,10 @@ namespace Meshimer.Scrapper.BLL
             var parsedUsername = string.Empty;
             if (_webDriver != null)
             {
-                _webDriver.Navigate().GoToUrl("https://www.youtube.com");
+                _webDriver.Navigate().GoToUrl("https://www.youtube.com/");
                 IWebElement blockElement = null;
 
-                if (_broserType != BrowserTypeEnum.IE) // IE issue
+                if (_browserType != BrowserTypeEnum.IE) // IE issue
                     blockElement = _webDriver.FindElement(By.Id(Constants.wb_BlockDetails));
 
                 if (blockElement != null)
@@ -85,7 +84,15 @@ namespace Meshimer.Scrapper.BLL
         void InitializeChromeDriverOptions()
         {
             _chromeOptions = new ChromeOptions();
+            //_chromeOptions.PageLoadStrategy = PageLoadStrategy.Normal;
+            //_chromeOptions.AcceptInsecureCertificates = true;
             _chromeOptions.AddArgument("disable-infobars");
+            //_chromeOptions.AddArgument("-no-sandbox");
+            //_chromeOptions.AddArguments("--headless");
+            // _chromeOptions.AddArguments("enable-nacl");
+            //_chromeOptions.AddArgument("--start-maximized");
+            //_chromeOptions.AddArgument("--ignore-certificate-errors");
+            //_chromeOptions.AddArgument("--disable-popup-blocking");
         }
 
         void InitializeFirefoxDriverOptions()

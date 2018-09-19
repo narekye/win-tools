@@ -25,8 +25,6 @@ namespace Meshimer.Common.Logger
 
         public void LogMessage(string message)
         {
-            //_fileName = CreateOrSkipFile();
-
             var currentTime = DateTime.Now.ToString();
             var appendText = $"{currentTime} : {message}{Environment.NewLine}";
 

@@ -4,6 +4,8 @@ using Service.AppRunner;
 using System;
 using System.Linq;
 using System.ServiceProcess;
+//using System.Threading;
+//using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using static Service.AppRunner.AppLoader;
@@ -70,10 +72,11 @@ namespace Meshimer.Scrapper.Service
             }
         }
 
-        async void TimerElapsed(object source, ElapsedEventArgs e)
+        void TimerElapsed(object source, ElapsedEventArgs e)
         {
             PROCESS_INFORMATION prc = new PROCESS_INFORMATION();
-            await Task.Run(() => StartProcessAndBypassUAC(@"C:\Program Files\Meshimer\Meshimer.Scrapper.Console.exe", out prc));
+            //Thread.Sleep(1000);
+            StartProcessAndBypassUAC($@"{Constants.MeshimerScrapperConsoleExeLocation} {Tags.Browser} {_browser} {Tags.Interval} {_interval}", out prc);
             Logger.Instance.LogMessage(string.Format(Constants.ProcessStartedWithPID, prc.dwProcessId));
         }
 

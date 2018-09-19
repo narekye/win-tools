@@ -29,6 +29,7 @@ namespace Meshimer.Scrapper.Console
 
             using (var scrapper = new MeshimerScrapper(browser))
             {
+                Thread.Sleep(1500);
                 Logger.Instance.LogMessage(Constants.BrowserOpened);
                 username = scrapper.GetUserNameFromMeshimerPageAndHandle(UsernameMismatchHandler);
                 var logMessage = string.Format(Constants.UserNameFromMeshimerPage, username);
