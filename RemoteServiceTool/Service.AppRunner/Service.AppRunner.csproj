@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationRunner.cs" />
+    <Compile Include="AppLoader.cs" />
     <Compile Include="Enums\SecurityImpersonationLevel.cs" />
     <Compile Include="Enums\TokenType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

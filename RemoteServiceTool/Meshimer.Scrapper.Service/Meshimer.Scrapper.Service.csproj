@@ -68,6 +68,10 @@
       <Project>{82472573-dc69-43a2-b3f1-78d50badd9a5}</Project>
       <Name>Meshimer.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Service.AppRunner\Service.AppRunner.csproj">
+      <Project>{be9561aa-5edb-4e7b-9d77-a558378714f3}</Project>
+      <Name>Service.AppRunner</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ProjectInstaller.resx">

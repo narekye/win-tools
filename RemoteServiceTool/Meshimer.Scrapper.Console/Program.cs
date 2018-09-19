@@ -37,7 +37,6 @@ namespace Meshimer.Scrapper.Console
 
                 System.Console.Clear();
                 System.Console.WriteLine(logMessage);
-                Thread.Sleep(1000);
             }
         }
 
