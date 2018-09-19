@@ -5,6 +5,8 @@ namespace Meshimer.Common
     public class Constants
     {
         public static string LogFolderLocation { get => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); }
+        public static string MeshimerScrapperConsoleExeLocation { get => $"{Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)}\\Meshimer\\Meshimer.Scrapper.Console.exe"; }
+
         public const string LogFolderName = "Meshimer service logs";
 
         public const string ServiceName = "Meshimer.Scrapper";

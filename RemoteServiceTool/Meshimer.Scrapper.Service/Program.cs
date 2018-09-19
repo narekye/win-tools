@@ -17,7 +17,7 @@ namespace Meshimer.Scrapper.Service
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new MeshimerService()
+                new ScrapperService()
             };
             ServiceBase.Run(ServicesToRun);
         }

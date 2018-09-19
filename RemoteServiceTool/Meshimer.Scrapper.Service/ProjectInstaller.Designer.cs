@@ -30,26 +30,32 @@ namespace Meshimer.Scrapper.Service
         /// </summary>
         private void InitializeComponent()
         {
-            this.MeshimerProcessInstaller = new System.ServiceProcess.ServiceProcessInstaller();
-            this.MeshimerInstaller = new System.ServiceProcess.ServiceInstaller();
+            this.serviceProcessInstaller1 = new System.ServiceProcess.ServiceProcessInstaller();
+            this.serviceInstaller1 = new System.ServiceProcess.ServiceInstaller();
             // 
-            // MeshimerProcessInstaller
+            // serviceProcessInstaller1
             // 
-            this.MeshimerProcessInstaller.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
-            this.MeshimerProcessInstaller.Password = null;
-            this.MeshimerProcessInstaller.Username = null;
+            this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
+            this.serviceProcessInstaller1.Password = null;
+            this.serviceProcessInstaller1.Username = null;
+            // 
+            // serviceInstaller1
+            // 
+            this.serviceInstaller1.ServiceName = Constants.ServiceName;
+            this.serviceInstaller1.DisplayName = Constants.ServiceDisplayName;
+            this.serviceInstaller1.Description = Constants.ServiceDescription;
             // 
             // ProjectInstaller
             // 
             this.Installers.AddRange(new System.Configuration.Install.Installer[] {
-            this.MeshimerProcessInstaller,
-            this.MeshimerInstaller});
+            this.serviceProcessInstaller1,
+            this.serviceInstaller1});
 
         }
 
         #endregion
 
-        private System.ServiceProcess.ServiceProcessInstaller MeshimerProcessInstaller;
-        private System.ServiceProcess.ServiceInstaller MeshimerInstaller;
+        private System.ServiceProcess.ServiceProcessInstaller serviceProcessInstaller1;
+        private System.ServiceProcess.ServiceInstaller serviceInstaller1;
     }
 }

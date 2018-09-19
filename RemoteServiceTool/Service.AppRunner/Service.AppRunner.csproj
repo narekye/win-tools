@@ -40,7 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationRunner.cs" />
+    <Compile Include="Enums\SecurityImpersonationLevel.cs" />
+    <Compile Include="Enums\TokenType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Structures\ProcessInformation.cs" />
+    <Compile Include="Structures\SecurityAttributes.cs" />
+    <Compile Include="Structures\StartupInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

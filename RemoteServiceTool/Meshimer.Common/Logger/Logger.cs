@@ -17,7 +17,7 @@ namespace Meshimer.Common.Logger
 
         private Logger()
         {
-            _directoryPath = Path.Combine(Constants.LogFolderLocation, Constants.LogFolderName);
+            _directoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.LogFolderName);
             if (!Directory.Exists(_directoryPath))
                 Directory.CreateDirectory(_directoryPath);
             _fileName = CreateOrSkipFile();
@@ -25,11 +25,12 @@ namespace Meshimer.Common.Logger
 
         public void LogMessage(string message)
         {
+            //_fileName = CreateOrSkipFile();
+
             var currentTime = DateTime.Now.ToString();
             var appendText = $"{currentTime} : {message}{Environment.NewLine}";
 
-            lock (_locker)
-                File.AppendAllText(FullFilePath, appendText);
+            File.AppendAllText(FullFilePath, appendText);
         }
 
         string CreateOrSkipFile()

@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3B7BF7F9-AA26-4F45-AF54-7DD2BBB6E729}</ProjectGuid>
+    <ProjectGuid>{B8724F81-A9D9-458D-A671-951D301FE3A8}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Meshimer.Scrapper.Service</RootNamespace>
     <AssemblyName>Meshimer.Scrapper.Service</AssemblyName>
@@ -51,11 +51,11 @@
     <Compile Include="ProjectInstaller.Designer.cs">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
-    <Compile Include="MeshimerService.cs">
+    <Compile Include="ScrapperService.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="MeshimerService.Designer.cs">
-      <DependentUpon>MeshimerService.cs</DependentUpon>
+    <Compile Include="ScrapperService.Designer.cs">
+      <DependentUpon>ScrapperService.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

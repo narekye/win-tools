@@ -1,6 +1,8 @@
-﻿namespace Meshimer.Scrapper.Service
+﻿using Meshimer.Common;
+
+namespace Meshimer.Scrapper.Service
 {
-    partial class MeshimerService
+    partial class ScrapperService
     {
         /// <summary> 
         /// Required designer variable.
@@ -29,7 +31,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            this.ServiceName = "Service1";
+            this.ServiceName = Constants.ServiceName;
         }
 
         #endregion
