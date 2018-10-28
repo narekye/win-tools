@@ -37,8 +37,9 @@
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\ControlzEx.dll</HintPath>
     </Reference>
-    <Reference Include="ProcessController.Lib">
-      <HintPath>..\WindowsStartupTool.Lib\bin\Debug\ProcessController.Lib.dll</HintPath>
+    <Reference Include="ProcessController.Lib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ProcessController\ProcessController.Lib\bin\Debug\ProcessController.Lib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

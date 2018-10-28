@@ -383,7 +383,15 @@ namespace ProcessController.Lib
             if (timeout == 0)
                 timeout = TimeSpan.FromMinutes(1).Milliseconds;
             System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping();
-            return ping.Send(computer, timeout).Status == System.Net.NetworkInformation.IPStatus.Success;
+            bool pingable = false;
+            try
+            {
+                pingable = ping.Send(computer, timeout).Status == System.Net.NetworkInformation.IPStatus.Success;
+            }
+            catch (Exception ex)
+            {
+            }
+            return pingable;
         }
 
         #endregion

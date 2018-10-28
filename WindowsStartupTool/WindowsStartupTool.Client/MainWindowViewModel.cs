@@ -17,12 +17,20 @@ namespace WindowsStartupTool.Client
         const string CheckAll = "Check All";
         const string UnCheckAll = "UnCheck All";
 
+        private readonly BackgroundWorker _backgroundWorker;
+
         ProcessController.Lib.Library _lib = new ProcessController.Lib.Library();
         private RegistryLookupSourceEnum _lookupSource;
         private SkippableSourceEnum _skippableSource;
+        private ComputerSourceTypeEnum _computerSourceType;
+        private FileManager _fileManager;
+        private bool _isPingEnabled;
+        private string _pingTooltip;
+
         private bool _startRemoteRegistryServiceIfNeeded;
         private bool _skipDefaults;
         private bool _filterByPc;
+        private int _pingTimeout;
         private string _machineName;
         private string _comboContent;
         private RegistryEditor _registryEditor;
@@ -43,6 +51,8 @@ namespace WindowsStartupTool.Client
         public RelayCommand ShowStartupAppsFromSelectedComputers { get; }
         public RelayCommand SelectAllComputers { get; }
         public RelayCommand ViewSkippableKeys { get; }
+        public RelayCommand DefaultTimeoutCommand { get; }
+        public RelayCommand PingComputersCommand { get; }
         #endregion
 
         #region INotifyPropertyChanged
@@ -66,24 +76,23 @@ namespace WindowsStartupTool.Client
             RemoveAppFromStartup = new RelayCommand(RemoveAppFromStartupExecute);
             ShowStartupAppsFromSelectedComputers = new RelayCommand(ShowStartupAppsFromSelectedComputersExecute, CanExecuteShowStartupApps);
             SelectAllComputers = new RelayCommand(SelectAllComputersExecute);
+            PingComputersCommand = new RelayCommand(PingComputersExecute);
+            _backgroundWorker = new BackgroundWorker();
+            _backgroundWorker.DoWork += PingComputers;
+            _backgroundWorker.RunWorkerCompleted += RunWorkerCompleted;
 
             SkipDefaults = true;
             LookupSource = RegistryLookupSourceEnum.Machine;
-
-            try
-            {
-                _allComputers = new ObservableCollection<string>(_lib.GetCurrentDomainComputers().OrderBy(x => x));
-            }
-            catch (Exception)
-            {
-                _allComputers = new ObservableCollection<string> { Environment.MachineName };
-            }
-
-            MachineName = _allComputers.FirstOrDefault();
-
+            StartRemoteRegistryServiceIfNeeded = true;
+            _fileManager = new FileManager();
+            ComputerSourceType = ComputerSourceTypeEnum.File;
             FilterByPc = true;
             SelectAllBtnText = CheckAll;
             SkippableSource = SkippableSourceEnum.Default;
+
+            SetDefaultTimeoutExecute(null);
+            IsPingEnabled = true;
+            PingTooltip = "Press ping to find offline computers.";
         }
 
         #endregion
@@ -204,20 +213,70 @@ namespace WindowsStartupTool.Client
                 SelectAllBtnText = CheckAll;
 
             foreach (var item in DomainComputers)
-                item.IsSelected = IsAnyChecked;
+            {
+                if (item.IsEnabled)
+                    item.IsSelected = IsAnyChecked;
+            }
         }
 
         void UpdateComputersList()
         {
             if (FilterByPc)
             {
-                DomainComputers = new ObservableCollection<SelectableComputer>(_allComputers.Where(x => x.EndsWith("pc", StringComparison.InvariantCultureIgnoreCase)).OrderBy(x => x)
-                .Select(x => { var item = new SelectableComputer { Name = x, IsSelected = false }; item.PropertyChanged += UpdateString; return item; }));
+                DomainComputers = new ObservableCollection<SelectableComputer>(_allComputers?.Where(x => x.EndsWith("pc", StringComparison.InvariantCultureIgnoreCase)).OrderBy(x => x)
+                .Select(x => { var item = new SelectableComputer { Name = x, IsSelected = false, IsEnabled = true }; item.PropertyChanged += UpdateString; return item; }));
             }
             else
             {
-                DomainComputers = new ObservableCollection<SelectableComputer>(_allComputers.OrderBy(x => x).Select(x => { var item = new SelectableComputer { Name = x, IsSelected = false }; item.PropertyChanged += UpdateString; return item; }));
+                DomainComputers = new ObservableCollection<SelectableComputer>(_allComputers?.OrderBy(x => x).Select(x => { var item = new SelectableComputer { Name = x, IsSelected = false, IsEnabled = true }; item.PropertyChanged += UpdateString; return item; }));
             }
+        }
+
+        void LoadCorrespondingComputers(ComputerSourceTypeEnum value)
+        {
+            switch (value)
+            {
+                case ComputerSourceTypeEnum.Network:
+                    try
+                    {
+                        _allComputers = new ObservableCollection<string>(_lib.GetCurrentDomainComputers().OrderBy(x => x));
+                    }
+                    catch (Exception)
+                    {
+                        _allComputers = new ObservableCollection<string> { Environment.MachineName };
+                    }
+                    break;
+                case ComputerSourceTypeEnum.File:
+                    _allComputers = new ObservableCollection<string>(_fileManager.GetComputerNames());
+                    break;
+            }
+
+            UpdateComputersList();
+        }
+
+        void PingComputersExecute(object param)
+        {
+            _backgroundWorker.RunWorkerAsync();
+            IsPingEnabled = false;
+            PingTooltip = "Ping is in progress, please wait...";
+        }
+
+        void PingComputers(object sender, DoWorkEventArgs e)
+        {
+            foreach (var computer in DomainComputers)
+            {
+                var pinged = _lib.Ping(computer.Name, PingTimeout); ;
+                computer.IsEnabled = pinged;
+
+                if (!pinged && computer.IsSelected)
+                    computer.IsSelected = false;
+            }
+        }
+
+        void RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            IsPingEnabled = true;
+            PingTooltip = "Press ping to find offline computers.";
         }
 
         void UpdateString(object o, PropertyChangedEventArgs e)
@@ -227,7 +286,14 @@ namespace WindowsStartupTool.Client
                 var selectedData = DomainComputers.Where(x => x.IsSelected);
                 ComboContent = string.Join(", ", selectedData.Select(x => x.Name));
             }
-            ShowStartupAppsFromSelectedComputers.NotifyCanExecuteChanged();
+
+            try
+            {
+                ShowStartupAppsFromSelectedComputers.NotifyCanExecuteChanged();
+            }
+            catch
+            {
+            }
         }
 
         void ViewSkippableKeysExecute(object param)
@@ -238,9 +304,40 @@ namespace WindowsStartupTool.Client
             window.Show();
         }
 
+        void SetDefaultTimeoutExecute(object param)
+        {
+            PingTimeout = 500;
+        }
+
         #endregion
 
         #region Properties
+
+        public string PingTooltip
+        {
+            get { return _pingTooltip; }
+            set
+            {
+                if (_pingTooltip != value)
+                {
+                    _pingTooltip = value;
+                    Notify();
+                }
+            }
+        }
+
+        public bool IsPingEnabled
+        {
+            get { return _isPingEnabled; }
+            set
+            {
+                if (_isPingEnabled != value)
+                {
+                    _isPingEnabled = value;
+                    Notify();
+                }
+            }
+        }
 
         public ObservableCollection<string> AllComputers
         {
@@ -310,6 +407,19 @@ namespace WindowsStartupTool.Client
                 {
                     _filterByPc = value;
                     UpdateComputersList();
+                    Notify();
+                }
+            }
+        }
+
+        public int PingTimeout
+        {
+            get { return _pingTimeout; }
+            set
+            {
+                if (_pingTimeout != value)
+                {
+                    _pingTimeout = value;
                     Notify();
                 }
             }
@@ -430,6 +540,20 @@ namespace WindowsStartupTool.Client
                 if (_selectAllBtnText != value)
                 {
                     _selectAllBtnText = value;
+                    Notify();
+                }
+            }
+        }
+
+        public ComputerSourceTypeEnum ComputerSourceType
+        {
+            get { return _computerSourceType; }
+            set
+            {
+                if (_computerSourceType != value)
+                {
+                    _computerSourceType = value;
+                    LoadCorrespondingComputers(value);
                     Notify();
                 }
             }
