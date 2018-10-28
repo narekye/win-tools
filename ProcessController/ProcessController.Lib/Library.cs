@@ -372,6 +372,20 @@ namespace ProcessController.Lib
             return "No match";
         }
 
+        /// <summary>
+        /// Pings to computer to check computer is turned on or not.
+        /// </summary>
+        /// <param name="computer">Computer to ping</param>
+        /// <param name="timeout">Timeout</param>
+        /// <returns></returns>
+        public bool Ping(string computer, int timeout)
+        {
+            if (timeout == 0)
+                timeout = TimeSpan.FromMinutes(1).Milliseconds;
+            System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping();
+            return ping.Send(computer, timeout).Status == System.Net.NetworkInformation.IPStatus.Success;
+        }
+
         #endregion
     }
 }
