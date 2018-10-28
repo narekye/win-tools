@@ -121,6 +121,7 @@ namespace WindowsStartupTool.Client
 
             foreach (var computer in computers)
             {
+                // Add ping here also
                 using (_registryEditor = new RegistryEditor(computer?.Name, LookupSource, StartRemoteRegistryServiceIfNeeded))
                 {
                     Dictionary<string, string> apps = null;
