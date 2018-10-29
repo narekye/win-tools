@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStartupTool.Lib", "W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStartupTool.Client", "WindowsStartupTool.Client\WindowsStartupTool.Client.csproj", "{A67E6ABF-6112-4C46-8F9B-D74A1AE418EB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStartupTool.Service", "WindowsStartupTool.Service\WindowsStartupTool.Service.csproj", "{6FB3BB40-7814-4D20-AE3B-B33427F7DD29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStartupTool.Common", "WindowsStartupTool.Common\WindowsStartupTool.Common.csproj", "{5E452F45-124D-4E6C-81DE-98F8B49C0A73}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{A67E6ABF-6112-4C46-8F9B-D74A1AE418EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A67E6ABF-6112-4C46-8F9B-D74A1AE418EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A67E6ABF-6112-4C46-8F9B-D74A1AE418EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FB3BB40-7814-4D20-AE3B-B33427F7DD29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FB3BB40-7814-4D20-AE3B-B33427F7DD29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FB3BB40-7814-4D20-AE3B-B33427F7DD29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FB3BB40-7814-4D20-AE3B-B33427F7DD29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E452F45-124D-4E6C-81DE-98F8B49C0A73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E452F45-124D-4E6C-81DE-98F8B49C0A73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E452F45-124D-4E6C-81DE-98F8B49C0A73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E452F45-124D-4E6C-81DE-98F8B49C0A73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
