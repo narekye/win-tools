@@ -12,9 +12,9 @@ namespace WindowsStartupTool.Service
     public partial class StartupService : ServiceBase
     {
         private Timer _timer;
-
+        private string _email;
         private IEnumerable<string> _computers;
-        private ComputerSourceTypeEnum _computerSource;
+
         private int _pingTimeout;
 
         public StartupService()
@@ -28,16 +28,7 @@ namespace WindowsStartupTool.Service
         {
             var lib = new Library();
 
-            switch (_computerSource)
-            {
-                case ComputerSourceTypeEnum.Network:
-                    _computers = lib.GetCurrentDomainComputers();
-                    break;
-                case ComputerSourceTypeEnum.File:
-                    // var fileManager = 
-                    // Some problems, need to discuss
-                    break;
-            }
+            _computers = lib.GetCurrentDomainComputers();
 
             if (_computers == null)
                 return;
@@ -46,8 +37,37 @@ namespace WindowsStartupTool.Service
             {
                 bool isOnline = lib.Ping(computer, _pingTimeout);
 
-                string line = $"PC name: {computer} | Status : {( isOnline ? "Online" : "Offline")}";
+                string line = $"PC name: {computer} | Status : {(isOnline ? "Online" : "Offline")}";
 
+                if (!isOnline)
+                    continue; // need to build here a report
+
+                using (var regedit = new RegistryEditor(computer, startServiceIfNeeded: true)) // default value, service may not start
+                {
+                    var startupApps = regedit.GetAllStartupAppsFromRegistry(SkippableSourceEnum.None);
+
+                    foreach (var application in startupApps)
+                    {
+                        if (regedit.DefaultStartupApps.Any(x => x == application.Key))
+                        {
+                            string val = $"Found default startup app {application.Key} | Path: {application.Value}";
+                        }
+                        else // means of found extra application
+                        {
+                            string val = $"Found an extra app {application.Key} | Path: {application.Value}";
+
+                            try
+                            {
+                                regedit.RemoveStartupAppByKey(application.Key);
+                                // append to text, application removed successfully.
+                            }
+                            catch (Exception ex)
+                            {
+                                // write error;
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -55,7 +75,6 @@ namespace WindowsStartupTool.Service
         {
             HandleStartArgs(args);
             _timer.Enabled = true;
-            // _timer.Interval = TimeSpan.FromDays(7).TotalMilliseconds; // one week
         }
 
         protected override void OnStop()
@@ -64,23 +83,13 @@ namespace WindowsStartupTool.Service
 
         void HandleStartArgs(string[] args)
         {
-            _computerSource = ComputerSourceTypeEnum.Network;
             _pingTimeout = 500;
-            double interval = TimeSpan.FromDays(7).TotalMilliseconds;
-
-            if (args.Any(x => x == Tags.Source))
-            {
-                var source = args[1];
-                if (int.TryParse(source, out int sourceId))
-                {
-                    _computerSource = (ComputerSourceTypeEnum)sourceId;
-                }
-            }
+            int interval = 7;
 
             if (args.Any(x => x == Tags.Interval)) // in days
             {
-                var intervalString = args[3];
-                if (double.TryParse(intervalString, out double pInterval))
+                var intervalString = args[1];
+                if (int.TryParse(intervalString, out int pInterval))
                 {
                     if (interval < pInterval)
                         interval = pInterval;
@@ -89,9 +98,14 @@ namespace WindowsStartupTool.Service
 
             if (args.Any(x => x == Tags.PingInterval))
             {
-                int.TryParse(args[5], out int pingInterval);
+                int.TryParse(args[3], out int pingInterval);
                 if (pingInterval > 0)
                     _pingTimeout = pingInterval;
+            }
+
+            if (args.Any(x => x == Tags.Email))
+            {
+                _email = args[5];
             }
 
             _timer.Interval = interval;

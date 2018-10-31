@@ -18,7 +18,7 @@ namespace WindowsStartupTool.Lib
         const string StartupSubKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
         const string RemoteRegistryService = "Remote Registry";
 
-        List<string> DefaultStartupApps => new List<string> { "igfxtray", "hotkeyscmds", "persistence" };
+        public List<string> DefaultStartupApps => new List<string> { "igfxtray", "hotkeyscmds", "persistence" };
 
         public RegistryEditor(string machine, RegistryLookupSourceEnum source = RegistryLookupSourceEnum.Machine, bool startServiceIfNeeded = false)
         {
@@ -33,7 +33,7 @@ namespace WindowsStartupTool.Lib
         {
             var result = GetStartupAppsFromRegistry(TargetPlatformEnum.x32);
             var result64 = GetStartupAppsFromRegistry(TargetPlatformEnum.x64);
-            
+
             foreach (var item64 in result64)
             {
                 if (!result.ContainsKey(item64.Key))

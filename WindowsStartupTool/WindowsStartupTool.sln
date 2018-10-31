@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStartupTool.Service"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStartupTool.Common", "WindowsStartupTool.Common\WindowsStartupTool.Common.csproj", "{5E452F45-124D-4E6C-81DE-98F8B49C0A73}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStartupTool.Service.Client", "WindowsStartupTool.Service.Client\WindowsStartupTool.Service.Client.csproj", "{2C31B3E3-0C2C-467E-A618-CFD9B3E9243E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{5E452F45-124D-4E6C-81DE-98F8B49C0A73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E452F45-124D-4E6C-81DE-98F8B49C0A73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E452F45-124D-4E6C-81DE-98F8B49C0A73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C31B3E3-0C2C-467E-A618-CFD9B3E9243E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C31B3E3-0C2C-467E-A618-CFD9B3E9243E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C31B3E3-0C2C-467E-A618-CFD9B3E9243E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C31B3E3-0C2C-467E-A618-CFD9B3E9243E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
