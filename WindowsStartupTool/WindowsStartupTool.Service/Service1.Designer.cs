@@ -1,6 +1,6 @@
 ﻿namespace WindowsStartupTool.Service
 {
-    partial class StartupService
+    partial class Service1
     {
         /// <summary> 
         /// Required designer variable.

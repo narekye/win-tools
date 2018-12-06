@@ -1,6 +1,4 @@
-﻿using WindowsStartupTool.Common.Constants;
-
-namespace WindowsStartupTool.Service
+﻿namespace WindowsStartupTool.Service
 {
     partial class ProjectInstaller
     {
@@ -41,9 +39,9 @@ namespace WindowsStartupTool.Service
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.ServiceName = Constants.ServiceName;
-            this.serviceInstaller1.DisplayName = Constants.ServiceDisplayName;
-            this.serviceInstaller1.Description = Constants.ServiceDescription;
+            this.serviceInstaller1.ServiceName = "Service1";
+            this.serviceInstaller1.Description = "desc";
+            this.serviceInstaller1.DisplayName = "Report.service";
             // 
             // ProjectInstaller
             // 

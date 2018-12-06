@@ -69,9 +69,9 @@ namespace ProcessController.Lib
                         result = string.Format("{0} {1} free of {2}", item[Name], FormatBytes(Convert.ToInt64(item[FreeSpace]), true), FormatBytes(Convert.ToInt64(item[Size]), true));
                 }
             }
-            catch
+            catch (Exception e)
             {
-                result = string.Empty;
+                result = $"Cannot get {e.Message}";
             }
 
             return result;

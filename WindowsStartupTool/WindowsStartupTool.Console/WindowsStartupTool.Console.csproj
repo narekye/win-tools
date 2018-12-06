@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0F3EB70C-281D-461C-82E6-2807057E249D}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>WindowsStartupTool.Service</RootNamespace>
-    <AssemblyName>WindowsStartupTool.Service</AssemblyName>
+    <ProjectGuid>{EE48DF35-7316-44DE-AE7F-D32D1AB8C530}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>WindowsStartupTool.Console</RootNamespace>
+    <AssemblyName>WindowsStartupTool.Console</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -32,34 +32,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ProcessController.Lib">
-      <HintPath>..\..\ProcessController\ProcessController.Lib\bin\Debug\ProcessController.Lib.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Management" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ProjectInstaller.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ProjectInstaller.Designer.cs">
-      <DependentUpon>ProjectInstaller.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Service1.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Service1.Designer.cs">
-      <DependentUpon>Service1.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -67,18 +50,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ProjectInstaller.resx">
-      <DependentUpon>ProjectInstaller.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Service.AppRunner\Service.AppRunner.csproj">
-      <Project>{be9561aa-5edb-4e7b-9d77-a558378714f3}</Project>
-      <Name>Service.AppRunner</Name>
-    </ProjectReference>
     <ProjectReference Include="..\WindowsStartupTool.Lib\WindowsStartupTool.Lib.csproj">
-      <Project>{dce56a30-f279-42c8-8561-e4fe9bb9a462}</Project>
+      <Project>{DCE56A30-F279-42C8-8561-E4FE9BB9A462}</Project>
       <Name>WindowsStartupTool.Lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WindowsStartupTool.Service\WindowsStartupTool.Service.csproj">
+      <Project>{0f3eb70c-281d-461c-82e6-2807057e249d}</Project>
+      <Name>WindowsStartupTool.Service</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

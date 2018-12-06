@@ -17,7 +17,7 @@ namespace WindowsStartupTool.Service
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new StartupService()
+                new Service1()
             };
             ServiceBase.Run(ServicesToRun);
         }

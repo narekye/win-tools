@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("WindowsStartupTool.Service")]
+[assembly: AssemblyTitle("Service.AppRunner")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("WindowsStartupTool.Service")]
+[assembly: AssemblyProduct("Service.AppRunner")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("0f3eb70c-281d-461c-82e6-2807057e249d")]
+[assembly: Guid("be9561aa-5edb-4e7b-9d77-a558378714f3")]
 
 // Version information for an assembly consists of the following four values:
 //
