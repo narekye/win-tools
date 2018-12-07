@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace FileRemoval.Service
 {
-    public class Class1
+    public class FileModel
     {
+        public string Name { get; set; }
+        public string Extension { get; set; }
+        public long Size { get; set; }
     }
 }

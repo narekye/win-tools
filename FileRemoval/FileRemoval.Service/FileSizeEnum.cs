@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileRemoval.Console
+namespace FileRemoval.Service
 {
-    public class Class1
+    public enum FileSizeEnum
     {
+        MB, GB, TB
     }
 }
