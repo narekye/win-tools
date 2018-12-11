@@ -6,14 +6,7 @@ using System.Threading.Tasks;
 
 namespace FileRemoval.Service
 {
-    public enum FileSizeEnum
+    class FileServiceLogger
     {
-        MB, GB, TB
-    }
-
-    public enum StatusEnum
-    {
-        Fail,
-        Success
     }
 }

@@ -27,6 +27,16 @@ namespace FileRemoval.Service
             InitializeDate(minimumAge);
         }
 
+        public FileServiceConfiguration(FileSizeEnum fileSize = FileSizeEnum.GB)
+        {
+            MinimumSize = _mappings[fileSize];
+        }
+
+        public FileServiceConfiguration()
+        {
+
+        }
+
         private void InitializeDate(DateTime date)
         {
             if (date == default(DateTime))

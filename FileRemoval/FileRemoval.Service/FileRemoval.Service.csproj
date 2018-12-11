@@ -46,6 +46,7 @@
     <Compile Include="FileModel.cs" />
     <Compile Include="FileService.cs" />
     <Compile Include="FileServiceConfiguration.cs" />
+    <Compile Include="FileServiceLogger.cs" />
     <Compile Include="FileSizeEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -11,21 +11,18 @@ namespace FileRemoval.Console
     {
         static void Main(string[] args)
         {
-            var configuration = new FileServiceConfiguration();
-
-
-            var f = new FileService(configuration, "max-pc");
-            //foreach (var t in f.GetLargeFilesFromComputers())
-            //{
+            var configuration = new FileServiceConfiguration(FileSizeEnum.MB);
             
-            //}
+            var fService = new FileService(configuration);
 
-            var user = "oleg";
-            foreach (var t in f.GetFilesFromComputersByUser(user))
+            var data = fService.GetLargeFilesFromComputers("oleg");
+
+            foreach(var item in data)
             {
-                  System.Console.WriteLine($"{t.Name} | {t.Size} | {t.Extension} ");
+                System.Console.WriteLine($"{item.ComputerName} {item.Name} {item.Note} | {item.Status}");
             }
-
+            
+            System.Console.Read();
         }
     }
 }
