@@ -8,6 +8,8 @@ namespace FileRemoval.Service
         public long MinimumSize { get; set; }
         public DateTime MinimumAge { get; set; }
 
+        public FileServiceLogger ServiceLogger { get; set; }
+
         private Dictionary<FileSizeEnum, long> _mappings = new Dictionary<FileSizeEnum, long>
         {
             { FileSizeEnum.MB,  1000000 },

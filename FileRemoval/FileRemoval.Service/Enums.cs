@@ -16,4 +16,11 @@ namespace FileRemoval.Service
         Fail,
         Success
     }
+
+    public enum LogBehaviorEnum
+    {
+        LogEverything, 
+        LogOnlyExceptions,
+        LogOnlyInformation
+    }
 }

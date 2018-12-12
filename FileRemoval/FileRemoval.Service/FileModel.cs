@@ -1,4 +1,6 @@
-﻿namespace FileRemoval.Service
+﻿using System;
+
+namespace FileRemoval.Service
 {
     public class FileModel
     {
@@ -11,5 +13,9 @@
         public string Note { get; set; }
 
         public StatusEnum Status { get; set; }
+
+        public string Username { get; set; }
+
+        public DateTime CreatedDate { get; set; }
     }
 }

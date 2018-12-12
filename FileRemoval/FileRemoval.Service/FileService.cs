@@ -48,7 +48,9 @@ namespace FileRemoval.Service
 
                 if (!isOnline)
                 {
-                    result.Add(new FileModel { ComputerName = computer, Note = "Offline" });
+                    var model = new FileModel { ComputerName = computer, Note = "Offline", Status = StatusEnum.Fail };
+                    LogMessage(model);
+                    result.Add(model);
                     continue;
                 }
 
@@ -62,7 +64,9 @@ namespace FileRemoval.Service
                 }
                 catch (Exception ex)
                 {
-                    result.Add(new FileModel { Note = ex.Message, Status = StatusEnum.Fail });
+                    var model = new FileModel { Note = ex.Message, Status = StatusEnum.Fail };
+                    LogMessage(model);
+                    result.Add(model);
                 }
 
                 if (usersInComputer == null || !usersInComputer.Any())
@@ -81,26 +85,33 @@ namespace FileRemoval.Service
                         {
                             if (file.Length > _configuration.MinimumSize)
                             {
-                                if (file.CreationTime <= _configuration.MinimumAge)
+                                if (file.CreationTime <= _configuration.MinimumAge && _configuration.MinimumSize != default(long))
                                     continue;
 
-                                result.Add(new FileModel
+                                var newResult = new FileModel
                                 {
                                     ComputerName = computer,
                                     Name = file.Name,
                                     Extension = file.Extension,
                                     Size = file.Length,
                                     FullName = file.FullName,
-                                    ReadableSize = BytesToString(file.Length)
-                                });
+                                    ReadableSize = BytesToString(file.Length),
+                                    Status = StatusEnum.Success,
+                                    Username = user,
+                                    CreatedDate = file.CreationTime
+                                };
 
+                                LogMessage(newResult);
+
+                                result.Add(newResult);
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        // write log and continue;
-                        result.Add(new FileModel { Note = ex.Message, ComputerName = computer, Status = StatusEnum.Fail });
+                        var newResult = new FileModel { Note = ex.Message, ComputerName = computer, Status = StatusEnum.Fail };
+                        LogMessage(newResult);
+                        result.Add(newResult);
                         continue;
                     }
                 }
@@ -118,7 +129,9 @@ namespace FileRemoval.Service
 
                 if (!isOnline)
                 {
-                    result.Add(new FileModel { ComputerName = computer, Note = "Offline", Status = StatusEnum.Fail });
+                    var model = new FileModel { ComputerName = computer, Note = "Offline", Status = StatusEnum.Fail };
+                    LogMessage(model);
+                    result.Add(model);
                     continue;
                 }
 
@@ -149,10 +162,10 @@ namespace FileRemoval.Service
                     {
                         if (file.Length > _configuration.MinimumSize)
                         {
-                            if (file.CreationTime <= _configuration.MinimumAge)
+                            if (file.CreationTime <= _configuration.MinimumAge && _configuration.MinimumSize != default(long))
                                 continue;
 
-                            result.Add(new FileModel
+                            var newResult = new FileModel
                             {
                                 ComputerName = computer,
                                 Name = file.Name,
@@ -160,15 +173,22 @@ namespace FileRemoval.Service
                                 Size = file.Length,
                                 FullName = file.FullName,
                                 ReadableSize = BytesToString(file.Length),
-                                Status = StatusEnum.Success
-                            });
+                                Status = StatusEnum.Success,
+                                Username = username,
+                                CreatedDate = file.CreationTime
+                            };
+
+                            LogMessage(newResult);
+
+                            result.Add(newResult);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    // write log and continue
-                    result.Add(new FileModel { Note = ex.Message, ComputerName = computer, Status = StatusEnum.Fail });
+                    var newResult = new FileModel { Note = ex.Message, ComputerName = computer, Status = StatusEnum.Fail };
+                    LogMessage(newResult);
+                    result.Add(newResult);
                     continue;
                 }
             }
@@ -180,18 +200,20 @@ namespace FileRemoval.Service
             var result = new List<KeyValuePair<string, StatusEnum>>();
             var largeFiles = GetLargeFilesFromComputers();
 
-            foreach (var file in largeFiles)
+            foreach (var file in largeFiles.Where(x => x.Status != StatusEnum.Fail))
             {
                 try
                 {
-                    // log
                     File.Delete(file.FullName);
-                    result.Add(new KeyValuePair<string, StatusEnum>(file.Name, StatusEnum.Success));
+                    var newResult = new KeyValuePair<string, StatusEnum>(file.Name, StatusEnum.Success);
+                    result.Add(newResult);
 
                 }
                 catch (Exception ex)
                 {
-                    result.Add(new KeyValuePair<string, StatusEnum>(file.Name, StatusEnum.Fail));
+                    var model = new KeyValuePair<string, StatusEnum>(file.Name, StatusEnum.Fail);
+                    result.Add(model);
+                    LogMessage(model, ex);
                 }
             }
             return result;
@@ -203,17 +225,19 @@ namespace FileRemoval.Service
             var result = new List<KeyValuePair<string, StatusEnum>>();
             var largeFiles = GetLargeFilesFromComputers(username);
 
-            foreach (var file in largeFiles)
+            foreach (var file in largeFiles.Where(x => x.Status != StatusEnum.Fail))
             {
                 try
                 {
                     File.Delete(file.FullName);
-                    result.Add(new KeyValuePair<string, StatusEnum>(file.Name, StatusEnum.Success));
+                    result.Add(new KeyValuePair<string, StatusEnum>(file.FullName, StatusEnum.Success));
 
                 }
                 catch (Exception ex)
                 {
-                    result.Add(new KeyValuePair<string, StatusEnum>(file.Name, StatusEnum.Fail));
+                    var model = new KeyValuePair<string, StatusEnum>(file.FullName, StatusEnum.Fail);
+                    LogMessage(model, ex);
+                    result.Add(model);
                 }
             }
             return result;
@@ -233,6 +257,77 @@ namespace FileRemoval.Service
         void ExcludeKnownFiles(ref IEnumerable<FileInfo> files)
         {
             files = files.Where(x => !x.Extension.Equals(".lnk") || !x.Extension.Equals(".ini"));
+        }
+
+        void LogMessage(KeyValuePair<string, StatusEnum> keyValue, Exception ex)
+        {
+            if (_configuration.ServiceLogger == null)
+                return;
+
+            FileModel fileModel = new FileModel
+            {
+                FullName = keyValue.Key,
+                Status = keyValue.Value,
+                Note = ex.Message
+            };
+
+            switch (_configuration.ServiceLogger.LogBehavior)
+            {
+                case LogBehaviorEnum.LogEverything:
+                    LogException();
+                    LogInfo();
+                    break;
+                case LogBehaviorEnum.LogOnlyExceptions:
+                    LogException();
+                    break;
+                case LogBehaviorEnum.LogOnlyInformation:
+                    LogInfo();
+                    break;
+            }
+
+            void LogException()
+            {
+                if (fileModel.Status == StatusEnum.Fail)
+                    _configuration.ServiceLogger.Error(fileModel);
+            }
+
+            void LogInfo()
+            {
+                if (fileModel.Status == StatusEnum.Success)
+                    _configuration.ServiceLogger.Info(fileModel);
+            }
+        }
+
+        void LogMessage(FileModel file)
+        {
+            if (_configuration.ServiceLogger == null)
+                return;
+
+            switch (_configuration.ServiceLogger.LogBehavior)
+            {
+                case LogBehaviorEnum.LogEverything:
+                    LogException();
+                    LogInfo();
+                    break;
+                case LogBehaviorEnum.LogOnlyExceptions:
+                    LogException();
+                    break;
+                case LogBehaviorEnum.LogOnlyInformation:
+                    LogInfo();
+                    break;
+            }
+
+            void LogException()
+            {
+                if (file.Status == StatusEnum.Fail)
+                    _configuration.ServiceLogger.Error(file);
+            }
+
+            void LogInfo()
+            {
+                if (file.Status == StatusEnum.Success)
+                    _configuration.ServiceLogger.Info(file);
+            }
         }
     }
 }
