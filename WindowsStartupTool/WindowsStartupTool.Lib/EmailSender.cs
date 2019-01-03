@@ -8,8 +8,8 @@ namespace WindowsStartupTool.Lib
         private readonly SmtpClient _smtpClient;
         private readonly MailMessage _mailMessage;
 
-        const string _sender = "notify.cubicles@gmail.com";
-        const string _senderPassword = "Notify@cubicles";
+        const string _sender = "";
+        const string _senderPassword = "";
 
         public EmailSender()
         {
@@ -31,6 +31,17 @@ namespace WindowsStartupTool.Lib
             _mailMessage.Subject = "Weekly report, Windows startup apps from Cubicles domain";
             _mailMessage.Body = body;
             _mailMessage.To.Add(new MailAddress(to));
+            _smtpClient.Send(_mailMessage);
+        }
+
+        public void Send(string body, params string[] addressedToSend)
+        {
+            _mailMessage.Subject = "Weekly report, Windows startup apps from Cubicles domain";
+            _mailMessage.Body = body;
+
+            foreach (var item in addressedToSend)
+                _mailMessage.To.Add(new MailAddress(item));
+
             _smtpClient.Send(_mailMessage);
         }
     }

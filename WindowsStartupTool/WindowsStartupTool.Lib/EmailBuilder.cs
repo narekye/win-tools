@@ -1,5 +1,6 @@
 ﻿using ProcessController.Lib;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.UI;
@@ -8,12 +9,14 @@ namespace WindowsStartupTool.Lib
 {
     public class EmailBuilder
     {
-        private StringWriter StringWriter;
+        private StringWriter _stringWriter;
+        private IEnumerable<string> _computers;
+        private bool _loadComputers;
 
-        HtmlTextWriter CreateHTMLDocument()
+        private HtmlTextWriter CreateHTMLDocument()
         {
-            StringWriter = new StringWriter();
-            var document = new HtmlTextWriter(StringWriter);
+            _stringWriter = new StringWriter();
+            var document = new HtmlTextWriter(_stringWriter);
 
             document.RenderBeginTag(HtmlTextWriterTag.Html);
             document.RenderBeginTag(HtmlTextWriterTag.Body);
@@ -22,7 +25,7 @@ namespace WindowsStartupTool.Lib
             return document;
         }
 
-        void InsertTr(HtmlTextWriter document, params string[] columns)
+        private void InsertTr(HtmlTextWriter document, params string[] columns)
         {
             document.RenderBeginTag(HtmlTextWriterTag.Tr);
             foreach (var item in columns)
@@ -34,11 +37,36 @@ namespace WindowsStartupTool.Lib
             document.RenderEndTag();
         }
 
-        public string BuildReport(int pingTimeout)
+        public EmailBuilder(IEnumerable<string> computers = null)
+        {
+            if (computers == null)
+                _loadComputers = true;
+
+            _computers = computers;
+        }
+
+        public EmailBuilder(params string[] computers)
+        {
+            if (computers == null)
+                _loadComputers = true;
+
+            _computers = computers.AsEnumerable();
+        }
+
+
+        public string BuildReportAndRemoveServices(int pingTimeout)
         {
             var lib = new Library();
 
-            var _computers = lib.GetCurrentDomainComputers();
+            try
+            {
+                if (_loadComputers)
+                    _computers = lib.GetCurrentDomainComputers();
+            }
+            catch (Exception ex)
+            {
+                return "Could not load computers " + ex.Message;
+            }
 
             if (_computers == null)
                 return "No comptuers found";
@@ -224,7 +252,7 @@ namespace WindowsStartupTool.Lib
             document.RenderEndTag();
             document.RenderEndTag();
 
-            return StringWriter.ToString();
+            return _stringWriter.ToString();
         }
     }
 }

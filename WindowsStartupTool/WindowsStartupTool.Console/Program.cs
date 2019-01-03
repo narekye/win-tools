@@ -8,17 +8,15 @@ namespace WindowsStartupTool.Console
         static void Main(string[] args)
         {
             Start();
-            Environment.Exit(0);
+            System.Console.Read();
         }
 
         static void Start()
         {
-            System.Console.WriteLine("Please do not close this app");
             var emailSender = new EmailSender();
             var _pingTimeout = 200;
-            var emailBuilder = new EmailBuilder();
-            string emailMessage = string.Empty;
-            emailMessage = emailBuilder.BuildReport(_pingTimeout);
+            var emailBuilder = new EmailBuilder("cubicle23-pc");
+            string emailMessage = emailBuilder.BuildReportAndRemoveServices(_pingTimeout);
             emailSender.Send(emailMessage, "yegoryan.narek@gmail.com");
         }
     }

@@ -18,7 +18,7 @@ namespace WindowsStartupTool.Lib
         const string StartupSubKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
         const string RemoteRegistryService = "Remote Registry";
 
-        public List<string> DefaultStartupApps => new List<string> { "igfxtray", "hotkeyscmds", "persistence" };
+        public List<string> DefaultStartupApps => new List<string> { "igfxtray", "hotkeyscmds", "persistence", "AvastUI.exe" };
 
         public RegistryEditor(string machine, RegistryLookupSourceEnum source = RegistryLookupSourceEnum.Machine, bool startServiceIfNeeded = false)
         {
