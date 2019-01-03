@@ -1,12 +1,8 @@
 ﻿using Meshimer.Common;
 using Meshimer.Common.Logger;
-using Service.AppRunner;
 using System;
-using System.Linq;
+using System.IO;
 using System.ServiceProcess;
-//using System.Threading;
-//using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using static Service.AppRunner.AppLoader;
 
@@ -33,19 +29,34 @@ namespace Meshimer.Scrapper.Service
 
         #endregion
 
+        #region Public methods
+
+        public void Start(string[] args)
+        {
+            OnStart(args);
+        }
+
+        public void Start()
+        {
+            OnStart(null);
+        }
+
+        #endregion
+
         #region Override
 
-        protected override void OnStart(string[] args) // -browser chrome  -interval 5000
+        protected override void OnStart(string[] args)
         {
             HandleArguments(args);
             _timer.Interval = _interval;
             _timer.Enabled = true;
-            //             AppLoader.StartProcessAndBypassUAC("cmd.exe", out PROCESS_INFORMATION prc);
         }
 
         protected override void OnStop()
         {
             Logger.Instance.LogMessage(Constants.MeshimerServiceStopped);
+            _timer.Enabled = false;
+            _timer.Stop();
         }
 
         #endregion
@@ -66,16 +77,25 @@ namespace Meshimer.Scrapper.Service
             }
             else
             {
-                _browser = "chrome";
-                _interval = (int)TimeSpan.FromMinutes(1).TotalMilliseconds; // (int)TimeSpan.FromHours(1).TotalMilliseconds; // change this
+                _browser = Browsers.Chrome;
+                _interval = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
                 Logger.Instance.LogMessage(string.Format(Constants.MeshimerServiceStartedWithDefaultArgs, _browser, _interval));
             }
         }
 
         void TimerElapsed(object source, ElapsedEventArgs e)
         {
+            if (!File.Exists(Constants.MeshimerScrapperConsoleExeLocation))
+            {
+                Logger.Instance.LogMessage(Constants.MeshimerExeFileNotFound);
+
+                if (Environment.UserInteractive)
+                    Console.WriteLine(Constants.MeshimerExeFileNotFound);
+
+                return;
+            }
+
             PROCESS_INFORMATION prc = new PROCESS_INFORMATION();
-            //Thread.Sleep(1000);
             StartProcessAndBypassUAC($@"{Constants.MeshimerScrapperConsoleExeLocation} {Tags.Browser} {_browser} {Tags.Interval} {_interval}", out prc);
             Logger.Instance.LogMessage(string.Format(Constants.ProcessStartedWithPID, prc.dwProcessId));
         }

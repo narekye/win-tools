@@ -22,6 +22,7 @@ namespace Meshimer.Common
         public const string MeshimerServiceStartWithArgs = "Meshimer service started w/ args {0}";
         public const string MeshimerServiceStartedWithDefaultArgs = "Meshimer service started w/ default args BROWSER: {0}, INTERVAL: {1}";
         public const string MeshimerServiceStopped = "Meshimer service stopped !!!";
+        public const string MeshimerExeFileNotFound = "Meshimer executable file not found. !!!";
         public const string ProcessStartedWithPID = "Process started with {0} PID";
     }
 

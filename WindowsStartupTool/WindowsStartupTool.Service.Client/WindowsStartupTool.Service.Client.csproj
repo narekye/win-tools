@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A67E6ABF-6112-4C46-8F9B-D74A1AE418EB}</ProjectGuid>
+    <ProjectGuid>{2C31B3E3-0C2C-467E-A618-CFD9B3E9243E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>WindowsStartupTool.Client</RootNamespace>
-    <AssemblyName>WindowsStartupTool.Client</AssemblyName>
+    <RootNamespace>WindowsStartupTool.Service.Client</RootNamespace>
+    <AssemblyName>WindowsStartupTool.Service.Client</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -34,21 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\ControlzEx.dll</HintPath>
-    </Reference>
-    <Reference Include="ProcessController.Lib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ProcessController\ProcessController.Lib\bin\Debug\ProcessController.Lib.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Presentation" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -67,22 +54,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AppsWindow\StartupAppsWindow.xaml.cs">
-      <DependentUpon>StartupAppsWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="AppsWindow\StartupAppsWindowViewModel.cs" />
-    <Compile Include="BoolRevertConverter.cs" />
-    <Compile Include="PassThroughConverter.cs" />
     <Compile Include="RelayCommand.cs" />
-    <Compile Include="SelectableComputer.cs" />
-    <Compile Include="SkipKeysWindow\SkipKeysWindow.xaml.cs">
-      <DependentUpon>SkipKeysWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SkipKeysWindow\SkipKeysWindowViewModel.cs" />
-    <Page Include="AppsWindow\StartupAppsWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -91,15 +63,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="EnumToBooleanConverter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="SkipKeysWindow\SkipKeysWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainWindowViewModel.cs" />
@@ -120,7 +87,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -130,6 +96,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\WindowsStartupTool.Common\WindowsStartupTool.Common.csproj">
+      <Project>{5E452F45-124D-4E6C-81DE-98F8B49C0A73}</Project>
+      <Name>WindowsStartupTool.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WindowsStartupTool.Lib\WindowsStartupTool.Lib.csproj">
       <Project>{DCE56A30-F279-42C8-8561-E4FE9BB9A462}</Project>
       <Name>WindowsStartupTool.Lib</Name>

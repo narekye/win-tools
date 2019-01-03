@@ -10,6 +10,7 @@ namespace WindowsStartupTool.Lib
     public class FileManager
     {
         const string _fileName = "SkipKeys.txt";
+        const string _cubiblesCompuers = "CubiclesComputers.txt";
 
         /// <summary>
         /// Saves passed values to SkipFiles.txt files
@@ -97,6 +98,14 @@ namespace WindowsStartupTool.Lib
                 var contentToWrite = Encoding.UTF8.GetBytes(json);
                 file.Write(contentToWrite, 0, contentToWrite.Length);
             }
+        }
+
+        public IEnumerable<string> GetComputerNames()
+        {
+            if (!File.Exists(_cubiblesCompuers))
+                using (File.Create(_cubiblesCompuers)) { }
+
+            return File.ReadAllText(_cubiblesCompuers)?.Split(',')?.AsEnumerable();
         }
     }
 }

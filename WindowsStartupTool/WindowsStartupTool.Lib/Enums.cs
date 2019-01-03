@@ -31,4 +31,10 @@
         Csv = 1,
         Json
     }
+
+    public enum ComputerSourceTypeEnum
+    {
+        Network = 1,
+        File
+    }
 }

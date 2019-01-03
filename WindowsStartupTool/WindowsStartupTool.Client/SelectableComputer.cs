@@ -9,6 +9,7 @@ namespace WindowsStartupTool.Client
 
         private string _name;
         private bool _isSelected;
+        private bool _isEnabled;
 
         #endregion
 
@@ -31,6 +32,19 @@ namespace WindowsStartupTool.Client
             {
                 _isSelected = value;
                 Notify();
+            }
+        }
+
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set
+            {
+                if (_isEnabled != value)
+                {
+                    _isEnabled = value;
+                    Notify();
+                }
             }
         }
 
