@@ -1,13 +1,20 @@
 ﻿using ProcessController.Lib;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.DirectoryServices;
+using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace FileRemoval.Service
 {
     public class FileService
     {
+        [DllImport("userenv.dll", CharSet = CharSet.Unicode, ExactSpelling = false, SetLastError = true)]
+        public static extern bool DeleteProfile(string sidString, string profilePath, string computerName);
+
         private IEnumerable<string> _computersToBeScanned;
         private const string PathToUsersFolderTemplate = @"\\{0}\C$\Users\";
         private Library _library = new Library();
@@ -327,6 +334,43 @@ namespace FileRemoval.Service
             {
                 if (file.Status == StatusEnum.Success)
                     _configuration.ServiceLogger.Info(file);
+            }
+        }
+
+        public ICollection<string> DeleteUserAccountByUsername(string computer, string username)
+        {
+            var result = new List<String>();
+
+            var computerNames = _library.GetCurrentDomainComputers();
+
+            //if (!computerNames.Any(x => x == username))
+            //    return new List<string>();
+
+            // current domain
+            using (DirectoryEntry directoryEntry = new DirectoryEntry("WinNT://" + computer))
+            {
+                using (DirectoryEntry group = directoryEntry.Children.Find("Adminstrators", "group"))
+                {
+                    var members = group.Invoke("Members");
+                    foreach (var item in (IEnumerable)members)
+                    {
+                        string accountName = new DirectoryEntry(item).Name;
+                        result.Add(accountName);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public void DeleteProfile(string computer, string username)
+        {
+            var context = new PrincipalContext(ContextType.Domain);
+            var userPrincipal = UserPrincipal.FindByIdentity(context, username);
+            if (userPrincipal != null)
+            {
+                var sid = userPrincipal.Sid;
+                var result = DeleteProfile(sid.ToString(), null, null);
             }
         }
     }

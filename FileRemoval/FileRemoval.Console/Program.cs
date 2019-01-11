@@ -31,16 +31,16 @@ namespace FileRemoval.Console
             #region These calls will not delete any file...
 
             // retrive data by username
-            var data = fileService.GetLargeFilesFromComputers("oleg");
+            //var data = fileService.GetLargeFilesFromComputers("oleg");
 
-            // The method above will query to all users in computers
-            //var data = fileService.GetLargeFilesFromComputers();
+            //// The method above will query to all users in computers
+            ////var data = fileService.GetLargeFilesFromComputers();
 
-            // just to displaying the data
-            foreach (var item in data)
-            {
-                System.Console.WriteLine($"{item.ComputerName} {item.Name} {item.Note} | {item.Status}");
-            }
+            //// just to displaying the data
+            //foreach (var item in data)
+            //{
+            //    System.Console.WriteLine($"{item.ComputerName} {item.Name} {item.Note} | {item.Status}");
+            //}
 
             #endregion
 
@@ -50,14 +50,17 @@ namespace FileRemoval.Console
             // fileService.DeleteLargeFiles()
 
             // with username
-            var data1 = fileService.DeleteLargeFiles("narek");
+            //var data1 = fileService.DeleteLargeFiles("narek");
 
-            foreach (var item in data1)
-            {
-                // Currently I don't have any files in max-pc computer, this list is empty
-            }
+            //foreach (var item in data1)
+            //{
+            //    // Currently I don't have any files in max-pc computer, this list is empty
+            //}
 
             #endregion
+
+            fileService.DeleteProfile("cubicle23-pc", "narek");
+            
 
             System.Console.Read();
         }
